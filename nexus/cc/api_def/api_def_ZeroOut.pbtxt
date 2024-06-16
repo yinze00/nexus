@@ -1,0 +1,7 @@
+op {
+    graph_op_name: "ZeroOut"
+    summary: "We want nothing out"
+    description: <<END
+    Testing for now
+END
+}

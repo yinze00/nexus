@@ -1,0 +1,12 @@
+build --copt=-g
+
+build --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=1"
+build --cxxopt="-g"
+build --cxxopt="-O0"
+build --cxxopt="-std=c++14"
+
+
+# Build TF with C++ 17 features.
+build:c++14 --cxxopt=-std=c++14
+build:c++17 --cxxopt=-stdlib=libc++
+build:c++1z --config=c++17

@@ -1,0 +1,7 @@
+op {
+    graph_op_name: "TimeThree"
+    summary: "We want x3"
+    description: <<END
+    Testing for now times 3 double?
+END
+}
