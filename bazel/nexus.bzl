@@ -256,3 +256,39 @@ def tf_gen_op_wrappers_cc(
 
 # Generates a Python library target wrapping the ops registered in "deps".
 #
+
+
+def tf_generate_proto_text_sources(name, srcs_relative_dir, srcs, protodeps = [], deps = [], visibility = None):
+    out_hdrs = (
+        [
+            p.replace(".proto", ".pb_text.h")
+            for p in srcs
+        ] + [p.replace(".proto", ".pb_text-impl.h") for p in srcs]
+    )
+    out_srcs = [p.replace(".proto", ".pb_text.cc") for p in srcs]
+    native.genrule(
+        name = name + "_srcs",
+        srcs = srcs + protodeps + [clean_dep("@org_tensorflow//tensorflow/tools/proto_text:placeholder.txt")],
+        outs = out_hdrs + out_srcs,
+        visibility = visibility,
+        cmd =
+            "$(location @org_tensorflow//tensorflow/tools/proto_text:gen_proto_text_functions) " +
+            "$(@D) " + srcs_relative_dir + " $(SRCS)",
+        tools = [
+            clean_dep("@org_tensorflow//tensorflow/tools/proto_text:gen_proto_text_functions"),
+        ],
+    )
+
+    native.filegroup(
+        name = name + "_hdrs",
+        srcs = out_hdrs,
+        visibility = visibility,
+    )
+
+    native.cc_library(
+        name = name,
+        srcs = out_srcs,
+        hdrs = out_hdrs,
+        visibility = visibility,
+        deps = deps,
+    )
