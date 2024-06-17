@@ -52,7 +52,7 @@ tf_proto_library(
 tf_generate_proto_text_sources(
     name = "protos_graph_text",
     srcs = GRAPH_PROTOS,
-    srcs_relative_dir = "nexus/proto/",
+    srcs_relative_dir = "nexus/turing/proto/",
     visibility = ["//visibility:public"],
     deps = [
 
