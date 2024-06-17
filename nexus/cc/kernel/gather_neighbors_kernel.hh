@@ -6,8 +6,8 @@
  */
 #pragma once
 
-#include <tensorflow/core/framework/op_kernel.h>
-#include <tensorflow/core/framework/tensor.h>
+#include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/framework/tensor.h"
 
 namespace tensorflow {
 
@@ -15,9 +15,9 @@ using CPUDEVICE = Eigen::ThreadPoolDevice;
 
 class GatherNeighborsOp : public OpKernel {
 public:
-  explicit GatherNeighborsOp(OpKernelConstruction *ctx) : OpKernel(ctx) {
-    OP_REQUIRES_OK(ctx, ctx->GetAttr("level", &level_));
-    OP_REQUIRES_OK(ctx, ctx->GetAttr("index_name", &index_name_));
+  explicit GatherNeighborsOp(OpKernelConstruction *context) : OpKernel(context) {
+    OP_REQUIRES_OK(context, context->GetAttr("level", &level_));
+    OP_REQUIRES_OK(context, context->GetAttr("index_name", &index_name_));
     LOG(INFO) << "GatherNeighborsOp @" << level_;
   }
 

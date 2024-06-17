@@ -9,7 +9,7 @@ tf_gen_op_libs(
         "hnsw_ops",
     ],
     deps = [
-        "@org_tensorflow//:tensorflow_cc",
+        # "@org_tensorflow//tensorflow/core:framework",
     ],
 )
 

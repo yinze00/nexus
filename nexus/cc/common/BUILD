@@ -15,7 +15,7 @@ cc_library(
         "-std=c++17"
     ],
     deps = [
-        "@org_tensorflow//:tensorflow"
+        "@org_tensorflow//tensorflow/core:framework"
     ]
 )
 

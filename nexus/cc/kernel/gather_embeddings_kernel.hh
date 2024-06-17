@@ -10,7 +10,9 @@
 
 namespace tensorflow {
 
-class GatherEmbeddingsOp : OpKernel {
+// using namespace tensorflow;
+
+class GatherEmbeddingsOp : public OpKernel {
 public:
   explicit GatherEmbeddingsOp(OpKernelConstruction *ctx) : OpKernel(ctx) {}
 

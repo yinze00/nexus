@@ -9,7 +9,8 @@ tf_kernel_library(
     ],
     hdrs = ["zero_out_op.h"],
     deps = [
-        "@org_tensorflow//:tensorflow"
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:framework_headers_lib",
     ]
 )
 
@@ -22,7 +23,8 @@ tf_kernel_library(
         "time_two_op.h"
     ],
     deps = [
-        "@org_tensorflow//:tensorflow"
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:framework_headers_lib",
     ]
 )
 
@@ -35,7 +37,8 @@ tf_kernel_library(
         "time_three_op.h"
     ],
     deps = [
-        "@org_tensorflow//:tensorflow"
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:framework_headers_lib",
     ]
 )
 
@@ -43,7 +46,9 @@ tf_kernel_library(
     name = "gather_neighbors",
     prefix = "gather_neighbors",
     deps = [
-        "@org_tensorflow//:tensorflow",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:framework_headers_lib",
+        "@org_tensorflow//tensorflow/core:lib",
         "//nexus/cc/common:common"
     ]
 )
@@ -51,8 +56,12 @@ tf_kernel_library(
 tf_kernel_library(
     name = "gather_embeddings",
     prefix = "gather_embeddings",
+    # srcs = ["gather_embeddings_kernel.cc"],
+    # hdrs = ["gather_embeddings_kernel.hh"],
     deps = [
-        "@org_tensorflow//:tensorflow",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:framework_headers_lib",
+        "@org_tensorflow//tensorflow/core:lib",
         "//nexus/cc/common:common"
     ]
 )

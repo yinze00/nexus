@@ -1,0 +1,1 @@
+bazelisk  build //nexus:nexus --verbose_failures

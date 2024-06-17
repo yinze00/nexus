@@ -119,7 +119,7 @@ def tf_gen_op_libs(op_lib_names, deps = None, is_external = True):
             name = n + "_op_lib",
             # copts = 
             srcs = ["ops/" + n + ".cc"],
-            deps = deps + [clean_dep("@org_tensorflow//:tensorflow_framework")],
+            deps = deps + [clean_dep("@org_tensorflow//tensorflow/core:framework")],
             visibility = ["//visibility:public"],
             alwayslink = 1,
             linkstatic = 1,
@@ -129,7 +129,7 @@ def tf_gen_op_wrapper_cc(
         name,
         out_ops_file,
         pkg = "",
-        op_gen = clean_dep("@org_tensorflow//:cc_op_gen_main"),
+        op_gen = clean_dep("@org_tensorflow//tensorflow/cc:cc_op_gen_main"),
         deps = None,
         include_internal_ops = 0,
         # ApiDefs will be loaded in the order specified in this list.
@@ -138,7 +138,7 @@ def tf_gen_op_wrapper_cc(
     tool = out_ops_file + "_gen_cc"
     if deps == None:
         deps = [pkg + ":" + name + "_op_lib"]
-    print(tool)
+    # print(tool)
     native.cc_binary(
         name = tool,
         copts = [],
@@ -164,16 +164,16 @@ def tf_gen_op_wrapper_cc(
         api_def_args_str = ",".join(api_def_args)
 
     print("++++++ 1 ++++++ ", tool)
-    print("+++ ", op_gen)
-    print("++++++ 2 ++++++ ", include_internal_ops)
+    # print("+++ ", op_gen)
+    # print("++++++ 2 ++++++ ", include_internal_ops)
 
-    ccmd = ("$(location :" + tool + ") $(location :" + out_ops_file + ".h) " +
-               "$(location :" + out_ops_file + ".cc) " +
-               str(include_internal_ops) + " " + api_def_args_str)
+    # ccmd = ("$(location :" + tool + ") $(location :" + out_ops_file + ".h) " +
+    #            "$(location :" + out_ops_file + ".cc) " +
+    #            str(include_internal_ops) + " " + api_def_args_str)
 
-    print("++++++ 3 ++++++ ", srcs)
+    # print("++++++ 3 ++++++ ", srcs)
 
-    print("++++++ 4 ++++++ ", ccmd)
+    # print("++++++ 4 ++++++ ", ccmd)
     
     native.genrule(
         name = name + "_genrule",
@@ -184,7 +184,7 @@ def tf_gen_op_wrapper_cc(
             out_ops_file + "_internal.cc",
         ],
         srcs = srcs,
-        tools = [":" + tool] + [clean_dep("@org_tensorflow//:tensorflow_framework")],
+        tools = [":" + tool] + [clean_dep("@org_tensorflow//tensorflow:tensorflow_framework")],
         cmd = ("$(location :" + tool + ") $(location :" + out_ops_file + ".h) " +
                "$(location :" + out_ops_file + ".cc) " +
                str(include_internal_ops) + " " + api_def_args_str),
@@ -201,10 +201,13 @@ def tf_gen_op_wrappers_cc(
         other_hdrs_internal = [],
         pkg = "",
         deps = [
-            clean_dep("@org_tensorflow//:tensorflow_cc")
+            # clean_dep("@org_tensorflow//tensorflow:tensorflow_cc")
+            clean_dep("@org_tensorflow//tensorflow/cc:ops"),
+            clean_dep("@org_tensorflow//tensorflow/cc:scope"),
+            clean_dep("@org_tensorflow//tensorflow/cc:const_op"),
         ],
         deps_internal = [],
-        op_gen = clean_dep("@org_tensorflow//:cc_op_gen_main"),
+        op_gen = clean_dep("@org_tensorflow//tensorflow/cc:cc_op_gen_main"),
         include_internal_ops = 0,
         visibility = None,
         # ApiDefs will be loaded in the order specified in this list.
@@ -230,13 +233,13 @@ def tf_gen_op_wrappers_cc(
         internalsrcs += ["annops/" + n + "_internal.cc"]
         internalhdrs += ["annops/" + n + "_internal.h"]
 
-    print("SRCS = ", subsrcs)
-    print("HDRS = ", subhdrs)
+    # print("SRCS = ", subsrcs)
+    # print("HDRS = ", subhdrs)
     native.cc_library(
         name = name,
         srcs = subsrcs,
         hdrs = subhdrs,
-        deps = deps + ["@org_tensorflow//:tensorflow_framework"],
+        deps = deps + ["@org_tensorflow//tensorflow/core:framework"],
         # copts = tf_copts(),
         alwayslink = 1,
         visibility = visibility,
@@ -245,7 +248,7 @@ def tf_gen_op_wrappers_cc(
         name = name + "_internal",
         srcs = internalsrcs,
         hdrs = internalhdrs,
-        deps = deps + deps_internal + ["@org_tensorflow//:tensorflow_framework"],
+        deps = deps + deps_internal + ["@org_tensorflow//tensorflow/core:framework"],
         # copts = tf_copts(),
         alwayslink = 1,
         visibility = visibility,
