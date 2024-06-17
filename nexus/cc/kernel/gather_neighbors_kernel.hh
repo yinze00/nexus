@@ -26,7 +26,7 @@ public:
 private:
   int32_t level_;
   std::string index_name_;
-  mutable std::mutex mtx_;
+  // mutable std::mutex mtx_;
 };
 
 } // namespace tensorflow
