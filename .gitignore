@@ -2,3 +2,4 @@ bazel-*
 .cache/
 .github/
 compile_commands.json
+*.dat
