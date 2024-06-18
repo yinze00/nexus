@@ -6,27 +6,6 @@ package nexus;
 option cc_generic_services = true;
 option cc_enable_arenas = true;
 
-message SetLoggerLevelRequest {
-    enum LogLevel {
-        DISABLE = 0;
-        FATAL   = 1;
-        ERROR   = 2;
-        WARN    = 3;
-        INFO    = 4;
-        DEBUG   = 5;
-        TRACE1  = 6;
-        TRACE2  = 7;
-        TRACE3  = 8;
-        NOTSET  = 9;
-    }
-    required string logger = 1;
-    required LogLevel level = 2;
-}
-
-message SetLoggerLevelResponse {
-    // optional bytes errorInfo = 1;
-}
-
 enum CompressType {
     CT_NO_COMPRESS = 0;
     CT_Z_SPEED_COMPRESS = 1;
@@ -34,33 +13,11 @@ enum CompressType {
     CT_SNAPPY = 3;
 }
 
-enum RequestType
-{
-    // RTP
-    RT_KV = 0;
-    RT_JSON = 1;
-    RT_PB = 2;
-    RT_PBA = 3;
-    RT_RUN_GRAPH = 4;
-
-    // Turing
-    RT_TURING_RUN_GRAPH = 10;  // 为了兼容RTP的Request Type, turing的从10开始
-}
-
 message NamedTensorProto {
-  // Name of the tensor.
   optional string name = 1;
-
-  // The client can populate a TensorProto using a tensorflow::Tensor`, or
-  // directly using the protobuf field accessors.
-  //
-  // The client specifies whether the returned tensor values should be
-  // filled tensor fields (float_val, int_val, etc.) or encoded in a
-  // compact form in tensor.tensor_content.
   optional tensorflow.TensorProto tensor = 2;
 }
 
-// for timeline over runGraph rpc, collect all called runmeta.
 message NamedRunMetadata {
     optional string name = 1;
     optional tensorflow.RunMetadata runMetadata = 2;
@@ -79,71 +36,26 @@ message GraphRequest {
     optional string src = 4;
     optional GraphInfo graphInfo = 5;
     optional tensorflow.RunOptions runOptions = 6;
-
-    // default location is LOC_PROXY, ProxyOpV3 will change it to LOC_SEARCHER
-    optional int32 location = 7 [default = 4];
-
-    optional bool trace_tensors = 8 [default = false];
-
-    optional bool debug = 9 [default = false];
-
-    // for gig agent
-    optional bytes gigRequestInfo = 10 [default = ""];
-
-    // eagleeye trace info
-    optional string traceId = 11;
-    optional string rpcId = 12;
-    optional string userData = 13;
-
-    optional bool normalRequest = 14 [default = false];
-
-    optional bool useDebugSession = 15 [default = false];  // RTP
-
-    optional int32 traceLevel = 16 [default = 10000];
 }
 
 message GraphResponse {
     repeated NamedTensorProto outputs = 1;
-    // optional ErrorInfo errorInfo = 2;
-    optional int32 weightInfo = 3; // for multi_call
+    optional int32 weightInfo = 3;
     optional string debugInfo = 4;
     repeated NamedRunMetadata runMetas = 12;
-
-    // for gig
-    optional int32 multicall_ec = 20 [ default = 0];
-    optional bytes gigResponseInfo = 21 [default = ""];
-
-    // tmp: for compatibility updating.
-    optional int32 matchdocsVersion = 60 [default = 0];
 }
 
-message BizGraphRequest {
-    required string bizName = 1;
-    optional bool debug = 2 [ default = true];
-}
+// message BizGraphRequest {
+//     required string bizName = 1;
+// }
 
-message BizGraphResponse {
-    optional string searchGraphDef = 1;
-    optional string proxyGraphDef = 2;
-    // optional ErrorInfo errorInfo = 3;
-    optional string graphDef = 4; // 兼容 be bizgraph web
-}
-
-// Timeline interfaces: ported from tf_search.
-message TimelineRequest {
-    optional string bizName = 1;
-}
-
-message TimelineResponse {
-    optional string traceInfo = 1;
-    // optional ErrorInfo errorInfo = 2;
-}
+// message BizGraphResponse {
+//     optional string searchGraphDef = 1;
+//     optional string proxyGraphDef = 2;
+//     optional string graphDef = 4;
+// }
 
 service GraphService {
     rpc runGraph(GraphRequest) returns(GraphResponse);
-    rpc getRunGraphTimeline(GraphRequest) returns(TimelineResponse);
-    // system query
-    rpc getBizGraph(BizGraphRequest) returns(BizGraphResponse);
-    rpc getTimeline(TimelineRequest) returns (TimelineResponse);
-    rpc setLoggerLevel(SetLoggerLevelRequest) returns (SetLoggerLevelResponse);
+    // rpc getBizGraph(BizGraphRequest) returns(BizGraphResponse);
 }
