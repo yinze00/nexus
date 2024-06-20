@@ -103,7 +103,7 @@ public:
 
 public:
   HGraph(DataType type, uint64_t n, int m, int h) : Graph(type, n, m) {
-    assert(h > 0);
+    // assert(h > 0);
     non_0_linklist_.reserve(h - 1);
   }
 

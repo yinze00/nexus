@@ -1,5 +1,7 @@
-package nexus;
+package nexus.turing;
 option cc_enable_arenas = true;
+
+// syntax = "proto2";
 
 enum ErrorCode {
     RS_ERROR_NONE = 0;

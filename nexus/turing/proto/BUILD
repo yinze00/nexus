@@ -60,7 +60,7 @@ tf_generate_proto_text_sources(
 )
 
 cc_library(
-    name = "proto_text",
+    name = "proto",
     hdrs = [
         "protos_graph_text_hdrs"
     ],

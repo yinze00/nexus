@@ -1,7 +1,7 @@
 import "tensorflow/core/framework/tensor.proto";
 import "tensorflow/core/protobuf/config.proto";
 
-package nexus;
+package nexus.turing;
 
 option cc_generic_services = true;
 option cc_enable_arenas = true;

@@ -2,16 +2,21 @@ package(default_visibility = ["//visibility:public"])
 
 load("//bazel:nexus.bzl", "tf_kernel_library")
 
+
+opkernel_common_deps = [
+    "//nexus/turing/common:common",
+    "//nexus/cc/common:common",
+    "@org_tensorflow//tensorflow/core:framework",
+    "@org_tensorflow//tensorflow/core:framework_headers_lib",
+]
+
 tf_kernel_library(
     name = "zero_out_op",
     srcs = [
         "zero_out_op.cc",
     ],
     hdrs = ["zero_out_op.h"],
-    deps = [
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
-    ]
+    deps = opkernel_common_deps
 )
 
 tf_kernel_library(
@@ -22,10 +27,7 @@ tf_kernel_library(
     hdrs = [
         "time_two_op.h"
     ],
-    deps = [
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
-    ]
+    deps = opkernel_common_deps
 )
 
 tf_kernel_library(
@@ -36,34 +38,31 @@ tf_kernel_library(
     hdrs = [
         "time_three_op.h"
     ],
-    deps = [
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
-    ]
+    deps = opkernel_common_deps
 )
 
 tf_kernel_library(
     name = "gather_neighbors",
     prefix = "gather_neighbors",
-    deps = [
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
-        "@org_tensorflow//tensorflow/core:lib",
-        "//nexus/cc/common:common"
-    ]
+    deps = opkernel_common_deps, 
+    # [
+    #     "@org_tensorflow//tensorflow/core:framework",
+    #     "@org_tensorflow//tensorflow/core:framework_headers_lib",
+    #     "@org_tensorflow//tensorflow/core:lib",
+    #     "//nexus/cc/common:common"
+    # ]
 )
 
 tf_kernel_library(
     name = "gather_embeddings",
     prefix = "gather_embeddings",
-    # srcs = ["gather_embeddings_kernel.cc"],
-    # hdrs = ["gather_embeddings_kernel.hh"],
-    deps = [
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
-        "@org_tensorflow//tensorflow/core:lib",
-        "//nexus/cc/common:common"
-    ]
+    deps = opkernel_common_deps,
+    # [
+    #     "@org_tensorflow//tensorflow/core:framework",
+    #     "@org_tensorflow//tensorflow/core:framework_headers_lib",
+    #     "@org_tensorflow//tensorflow/core:lib",
+    #     "//nexus/cc/common:common"
+    # ]
 )
 
 cc_library(

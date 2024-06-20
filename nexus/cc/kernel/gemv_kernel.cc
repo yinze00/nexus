@@ -19,22 +19,18 @@ public:
     const Tensor &matrix = ctx->input(1);
     const Tensor &vector = ctx->input(0);
 
-    // 检查形状
     OP_REQUIRES(ctx, matrix.dims() == 2,
                 errors::InvalidArgument("matrix must be 2-dimensional"));
     OP_REQUIRES(ctx, vector.dims() == 1,
                 errors::InvalidArgument("vector must be 1-dimensional"));
 
-    // 确定矩阵和向量的维度
     int batch_size = matrix.dim_size(0);
     int num_cols = matrix.dim_size(1);
     int num_rows = vector.dim_size(0);
 
-    // 输出张量
     Tensor *output = nullptr;
     OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {batch_size, 1}, &output));
 
-    // Gemv 计算
     auto matrix_data = matrix.flat<T>();
     auto vector_data = vector.flat<T>();
     auto output_data = output->flat<T>();

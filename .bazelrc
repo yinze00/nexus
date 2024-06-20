@@ -10,3 +10,7 @@ build --cxxopt="-std=c++14"
 build:c++14 --cxxopt=-std=c++14
 build:c++17 --cxxopt=-stdlib=libc++
 build:c++1z --config=c++17
+
+# linker 
+
+build:use-lld --linkopt=-fuse-ld=lld
