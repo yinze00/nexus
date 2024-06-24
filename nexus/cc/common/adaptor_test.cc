@@ -12,7 +12,7 @@ namespace common {
 TEST(Adaptor, load_index) {
     std::string hnsw_path =
         "/home/yinze/dev/zenith/nexus/nexus/data/hnsw_model/data/"
-        "hnsw_10000.dat";
+        "hnsw_100000.dat";
 
     auto adaptor = new nexus::common::FaissHNSWAdaptor();
 

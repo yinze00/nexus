@@ -17,7 +17,7 @@ namespace common {
 // ctor
 Graph::Graph(DataType type, uint64_t n, int m) : n_(n), m_(m) {
     labels_.reserve(n);
-    linklist_.reset(new LinkedListType(n_, m_));
+    linklist_.reset(new LinkedListType((uint32_t)n_, (size_t)m_));
 }
 
 // dtor
@@ -34,7 +34,7 @@ void Graph::get_labels(const std::vector<uint32_t>& indice,
 
 void Graph::set_labels(std::vector<uint64_t>& labels) { labels_.swap(labels); }
 
-float* Graph::gather_neighbors(size_t index) {return nullptr;}
+uint32_t* Graph::gather_neighbors(size_t index) {return nullptr;}
 
 void Graph::gather_neighbors(const std::vector<size_t>& indice) {}
 
