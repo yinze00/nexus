@@ -1,4 +1,4 @@
-
+#pragma once
 #include "nexus/utils/lock.hh"
 #include "query_resource.hh"
 #include "tf_session.hh"

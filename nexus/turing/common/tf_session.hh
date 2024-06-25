@@ -9,15 +9,16 @@
 namespace nexus {
 namespace turing {
 struct TFSession final {
-  std::vector<std::shared_ptr<tensorflow::Session>> sessions;
-  std::vector<std::string> inputs;
-  tensorflow::GraphDef graphdef;
-  tensorflow::GraphDef fullGraphDef;
-  std::string graphName;
+    // std::vector<std::shared_ptr<tensorflow::Session>> sessions;
+    std::shared_ptr<tensorflow::Session> session;
+    std::vector<std::string> inputs;
+    tensorflow::GraphDef graphdef;
+    tensorflow::GraphDef fullGraphDef;
+    std::string graphName;
 };
 
 using TFSessionPtr = std::shared_ptr<TFSession>;
 using TFSessionUPtr = std::unique_ptr<TFSession>;
 
-} // namespace turing
-} // namespace nexus
+}  // namespace turing
+}  // namespace nexus

@@ -5,6 +5,8 @@ cc_library(
     hdrs = glob(["*.hh"]),
     srcs = glob(["*.cc"]),
     deps = [
-        "//nexus/turing/common:common"
+        "//nexus/turing/common:common",
+        "@org_tensorflow//tensorflow/core:direct_session",
+        "@org_tensorflow//tensorflow/cc/saved_model:loader"
     ]
 )

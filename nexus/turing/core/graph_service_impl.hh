@@ -8,6 +8,7 @@
 #include "graph_context.hh"
 #include "graph_manager.hh"
 #include "nexus/turing/common/run_id_allocator.hh"
+#include "nexus/turing/core/graph_biz.hh"
 #include "nexus/turing/proto/run_graph.pb.h"
 
 namespace nexus {
@@ -18,6 +19,14 @@ using CreateContextFunc =
     std::function<GraphContext*(const GraphContextArgs&, const ReqT*, RspT*)>;
 
 class GraphServiceImpl : public GraphManager {
+  public:
+    GraphServiceImpl() = default;
+    virtual ~GraphServiceImpl() = default;
+
+    void init();
+
+    GraphBizPtr init_biz();
+
   public:
     void runGraph(::google::protobuf::RpcController* controller,
                   const GraphRequest* request, GraphResponse* response,
@@ -37,12 +46,19 @@ class GraphServiceImpl : public GraphManager {
   protected:
     virtual GraphContext* doCreateContext(const GraphContextArgs& args,
                                           const GraphRequest* request,
-                                          GraphResponse* response);
+                                          GraphResponse* response) {
+        return new GraphContext();
+        // return biz_->createContext();
+
+        // auto args = biz_->getGraphContextArgs();
+
+        
+    }
 
   private:
     std::atomic_int_fast64_t session_id_{0};
     mutable int64_t max_session_{10};
-
+    GraphBizPtr biz_{nullptr};
     common::RunIDAllocatorPtr run_id_allocator;
 };
 
@@ -54,13 +70,13 @@ void GraphServiceImpl::process(::google::protobuf::RpcController* controller,
     auto cur = session_id_.fetch_add(1, std::memory_order_relaxed);
 
     auto runid = run_id_allocator->get();
-    GraphContextArgs argv;
+    GraphContextArgs argv = biz_->getGraphContextArgs();
 
     argv.run_id = runid;
 
     auto ctx = createContext(argv, request, response);
 
-    ctx->run([this, response, done, runid]() -> void {
+    ctx->run([this, response, done, runid](ErrorInfo&) -> void {
         done->Run();
         run_id_allocator->put(runid);
         session_id_.fetch_sub(1, std::memory_order_relaxed);
