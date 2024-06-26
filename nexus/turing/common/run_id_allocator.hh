@@ -18,6 +18,9 @@ namespace common {
 
 struct RunIDAllocator {
   public:
+    RunIDAllocator() = default;
+    virtual ~RunIDAllocator() = default;
+
     RunIDAllocator(const RunIDAllocator&) = delete;
     RunIDAllocator& operator=(const RunIDAllocator&) = delete;
 

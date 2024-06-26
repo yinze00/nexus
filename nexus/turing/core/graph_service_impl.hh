@@ -25,12 +25,12 @@ class GraphServiceImpl : public GraphManager {
 
     void init();
 
-    GraphBizPtr init_biz();
+    virtual GraphBizPtr init_biz();
 
   public:
-    void runGraph(::google::protobuf::RpcController* controller,
-                  const GraphRequest* request, GraphResponse* response,
-                  ::google::protobuf::Closure* done);
+    virtual void runGraph(::google::protobuf::RpcController* controller,
+                          const GraphRequest* request, GraphResponse* response,
+                          ::google::protobuf::Closure* done);
 
     GraphContext* createContext(const GraphContextArgs& args,
                                 const GraphRequest* req, GraphResponse* rsp) {
@@ -51,8 +51,6 @@ class GraphServiceImpl : public GraphManager {
         // return biz_->createContext();
 
         // auto args = biz_->getGraphContextArgs();
-
-        
     }
 
   private:

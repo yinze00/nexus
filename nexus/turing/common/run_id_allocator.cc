@@ -14,10 +14,10 @@ void RunIDAllocator::init(size_t d) {
 
 int64_t RunIDAllocator::get() {
     std::lock_guard<std::mutex> lock(mtx_);
-
     for (int64_t i = 0; i < max_session_; ++i) {
         if (!bitmap_[i]) {
             bitmap_[i] = true;
+            LOG(INFO) << "get " << i;
             return i;
         }
     }
@@ -26,6 +26,8 @@ int64_t RunIDAllocator::get() {
 
 void RunIDAllocator::put(int64_t id) {
     std::lock_guard<std::mutex> lock(mtx_);
+
+    LOG(INFO) << "put " << id;
 
     if (likely(id >= 0 && id < max_session_ && bitmap_[id])) {
         bitmap_[id] = false;

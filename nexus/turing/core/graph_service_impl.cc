@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "graph_biz.hh"
 #include "graph_context.hh"
 
 namespace nexus {
@@ -9,9 +10,15 @@ namespace turing {
 
 // GraphServiceImpl::GraphServiceImpl()
 
-void GraphServiceImpl::init() { biz_ = init_biz(); }
+void GraphServiceImpl::init() {
+    biz_ = init_biz();
+    TF_CHECK_OK(biz_->init("default"));
+    run_id_allocator.reset(new common::RunIDAllocator());
+    run_id_allocator->init(1024);
+}
 
 GraphBizPtr GraphServiceImpl::init_biz() {
+
     return std::make_shared<GraphBiz>();
 }
 

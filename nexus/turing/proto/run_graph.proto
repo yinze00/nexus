@@ -6,13 +6,6 @@ package nexus.turing;
 option cc_generic_services = true;
 option cc_enable_arenas = true;
 
-enum CompressType {
-    CT_NO_COMPRESS = 0;
-    CT_Z_SPEED_COMPRESS = 1;
-    CT_Z_DEFAULT_COMPRESS = 2;
-    CT_SNAPPY = 3;
-}
-
 message NamedTensorProto {
   optional string name = 1;
   optional tensorflow.TensorProto tensor = 2;
@@ -20,7 +13,7 @@ message NamedTensorProto {
 
 message NamedRunMetadata {
     optional string name = 1;
-    optional tensorflow.RunMetadata runMetadata = 2;
+    optional tensorflow.RunMetadata run_meta_data = 2;
 }
 
 message GraphInfo {
@@ -30,19 +23,18 @@ message GraphInfo {
 }
 
 message GraphRequest {
-    optional string bizName = 1;
-    optional CompressType compressType = 2 [default = CT_NO_COMPRESS];
+    optional string biz = 1;
     optional int64 timeout = 3;
     optional string src = 4;
-    optional GraphInfo graphInfo = 5;
-    optional tensorflow.RunOptions runOptions = 6;
+    optional GraphInfo graph_info = 5;
+    optional tensorflow.RunOptions run_options = 6;
 }
 
 message GraphResponse {
     repeated NamedTensorProto outputs = 1;
-    optional int32 weightInfo = 3;
-    optional string debugInfo = 4;
-    repeated NamedRunMetadata runMetas = 12;
+    // optional int32 weight_info = 3;
+    // optional string debugInfo = 4;
+    repeated NamedRunMetadata run_metas = 12;
 }
 
 // message BizGraphRequest {

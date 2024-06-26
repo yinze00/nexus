@@ -19,6 +19,9 @@ GraphContextArgs GraphBiz::getGraphContextArgs() {
 
     // args.run_options.set_run_id(int64_t value)
 
+
+    LOG(INFO) << "args done!";
+
     return args;
 }
 
@@ -41,13 +44,13 @@ Status GraphBiz::loadGraph() {
 
     auto tfss = std::make_shared<TFSession>();
     tfss->graphName = biz_name;
-    tfss->session = std::move(bundle->session);
+    // tfss->session = std::move(bundle->session);
 
     const tensorflow::DeviceMgr* dm = nullptr;
 
-    TF_CHECK_OK(tfss->session->LocalDeviceManager(&dm));
+    TF_CHECK_OK(bundle->session->LocalDeviceManager(&dm));
     auto ds = dm->ListDevices();
-    if (!ds.empty())
+    if (ds.empty())
         return tensorflow::Status(tensorflow::error::UNAVAILABLE,
                                   "ListDevices Empty!");
 
@@ -60,7 +63,9 @@ Status GraphBiz::loadGraph() {
 
 std::shared_ptr<tensorflow::Session> GraphBiz::getSession(
     const std::string& model) const {
+    LOG(INFO) << model;
     auto tfss = getTFSession(model);
+    LOG(INFO) << "After get model";
     return tfss->session;
 }
 

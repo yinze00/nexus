@@ -1,3 +1,6 @@
+#pragma once
+
+#include <ios>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -39,7 +42,14 @@ class GraphBiz {
     std::shared_ptr<TFSession> getTFSession() const {
         return getTFSession(biz_name);
     };
-    std::shared_ptr<TFSession> getTFSession(const std::string&) const;
+    std::shared_ptr<TFSession> getTFSession(const std::string& model) const {
+        LOG(INFO) << "gettfsession: " << model << " sessions_.size = " << sessions_.size();
+        auto it = sessions_.find(model);
+        std::cout << model << std::boolalpha << (it == sessions_.end());
+        if (it != sessions_.end()) {
+            return it->second;
+        }
+    };
     void putTFSession(const std::string&, std::shared_ptr<TFSession>);
 
     SessionResourcePtr getSessionResource() { return session_resource_; }
