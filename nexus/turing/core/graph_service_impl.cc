@@ -22,9 +22,9 @@ void GraphServiceImpl::runGraph(::google::protobuf::RpcController* controller,
     auto out1 = response->add_outputs();
     out1->set_name("mmoe");
 
-    GraphContextArgs args;
+    // GraphContextArgs args;
 
-    args.run_id = run_id_allocator->get();
+    // args.run_id = run_id_allocator->get();
 
     // auto ctx = createContext(args, request, response);
 

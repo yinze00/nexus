@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <vector>
 
 #include "nexus/turing/common/op_util.hh"
@@ -12,9 +13,11 @@ namespace nexus {
 namespace turing {
 
 struct GraphContextArgs {
-    int64_t run_id{0};
+    // int64_t run_id{0};
     tensorflow::SessionResourcePtr session_resource{nullptr};
     tensorflow::RunOptions run_options;
+
+    std::shared_ptr<tensorflow::Session> sesson{nullptr};
 };
 
 struct GraphContext {
