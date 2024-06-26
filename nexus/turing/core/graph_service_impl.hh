@@ -72,7 +72,7 @@ void GraphServiceImpl::process(::google::protobuf::RpcController* controller,
     auto runid = run_id_allocator->get();
     GraphContextArgs argv = biz_->getGraphContextArgs();
 
-    argv.run_id = runid;
+    argv.run_options.set_run_id(runid);
 
     auto ctx = createContext(argv, request, response);
 

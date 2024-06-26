@@ -1,3 +1,4 @@
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -10,7 +11,7 @@
 namespace nexus {
 namespace turing {
 
-using tensorflow::DirectSession;
+using tensorflow::Session;
 using tensorflow::SessionResourcePtr;
 using tensorflow::Status;
 
@@ -31,10 +32,10 @@ class GraphBiz {
 
     const tensorflow::RunOptions& getRunOptions() const;
 
-    tensorflow::DirectSession* getSession() const {
+    std::shared_ptr<tensorflow::Session> getSession() const {
         return getSession(biz_name);
     };
-    tensorflow::DirectSession* getSession(const std::string&) const;
+    std::shared_ptr<tensorflow::Session> getSession(const std::string&) const;
     std::shared_ptr<TFSession> getTFSession() const {
         return getTFSession(biz_name);
     };
@@ -67,7 +68,7 @@ class GraphBiz {
     SessionResourcePtr session_resource_{nullptr};
     tensorflow::SessionOptions options;
 
-    std::unordered_map<std::string, TFSession> sessions_;
+    std::unordered_map<std::string, TFSessionPtr> sessions_;
 };
 
 using GraphBizPtr = std::shared_ptr<GraphBiz>;

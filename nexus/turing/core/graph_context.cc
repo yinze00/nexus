@@ -18,9 +18,6 @@ void GraphContext::run(CallBack callback) {
         return;
     }
 
-    
-    
-
     callback(info);
 }
 
