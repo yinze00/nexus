@@ -4,7 +4,9 @@
 
 #include <memory>
 
+#include "nexus/turing/common/scope_deleter.hh"
 #include "nexus/turing/proto/run_graph.pb.h"
+
 namespace nexus {
 namespace turing {
 
@@ -12,13 +14,14 @@ namespace turing {
 // template <typename ResponseType>
 class GraphClosure : public google::protobuf::Closure {
   public:
-    GraphClosure(GraphRequest* graph_req, GraphResponse* graph_rsp,
-                 void* rsp, google::protobuf::Closure* done)
+    GraphClosure(GraphRequest* graph_req, GraphResponse* graph_rsp, void* rsp,
+                 google::protobuf::Closure* done)
         : ureq_(graph_req), ursp_(graph_rsp), done_(done), rsp_(rsp) {}
 
     void Run() override {
+        nexus::common::ScopeDeleter<GraphClosure> deleter(this);
+
         fill_rsp();
-        delete this;
         done_->Run();
     }
 

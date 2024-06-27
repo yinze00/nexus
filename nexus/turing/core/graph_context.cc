@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "nexus/turing/common/scope_deleter.hh"
+
 namespace nexus {
 namespace turing {
 
@@ -28,12 +30,13 @@ GraphContext::GraphContext(const GraphContextArgs& argv,
  * 11. dumbass
  */
 void GraphContext::run(CallBack callback) {
+    nexus::common::ScopeDeleter<GraphContext> deleter(this);
+
     ErrorInfo info;
 
     if (!parseRequest()) {
         callback(info);
         LOG(ERROR) << "Failed to parse Request...";
-        delete this;
         return;
     }
 
@@ -44,12 +47,11 @@ void GraphContext::run(CallBack callback) {
 
     LOG(INFO) << "run_id: " << run_id;
 
-    if (unlikely(fill_inputs(inputs))) {
-        // return;
+    if (unlikely(!fill_inputs(inputs))) {
+        return;
     }
 
     callback(info);
-    delete this;
 }
 
 bool GraphContext::fill_inputs(
