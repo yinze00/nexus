@@ -29,38 +29,70 @@ tensorflow::QueryResourcePtr GraphBiz::prepareQueryResource() {
 }
 
 Status GraphBiz::init(const std::string& name) {
+    createSessionResource(1024);
+
     TF_CHECK_OK(loadGraph());
 
     auto tfss = getTFSession();
-
-    createSessionResource(1024);
 
     return Status::OK();
 }
 
 Status GraphBiz::loadGraph() {
-    tensorflow::RunOptions ropt;
+    auto tfss = std::make_shared<TFSession>();
+    tfss->graphName = biz_name;
+
+    tensorflow::RunOptions  ropt;
+    tensorflow::RunMetadata metas;
+
     std::string hnsw_model_dir =
         "/home/yinze/dev/zenith/nexus/nexus/data/times_model";
     auto bundle = std::make_shared<tensorflow::SavedModelBundle>();
 
     TF_CHECK_OK(tensorflow::LoadSavedModel(options, ropt, hnsw_model_dir,
                                            {"serve"}, bundle.get()));
+    {  // set session_resource to runtime Device.
+        const tensorflow::DeviceMgr* dm = nullptr;
 
-    auto tfss = std::make_shared<TFSession>();
-    tfss->graphName = biz_name;
-    // tfss->session = std::move(bundle->session);
+        TF_CHECK_OK(bundle->session->LocalDeviceManager(&dm));
+        auto ds = dm->ListDevices();
+        LOG(INFO) << "ds.size = " << ds.size();
+        if (ds.empty())
+            return tensorflow::Status(tensorflow::error::UNAVAILABLE,
+                                      "ListDevices Empty!");
 
-    const tensorflow::DeviceMgr* dm = nullptr;
+        if (session_resource_ == nullptr) {
+            LOG(ERROR) << "session_resource_ = nullptr";
+        }
+        for (auto d : ds) {
+            auto ld = dynamic_cast<tensorflow::LocalDevice*>(d);
+            ld->session_resource_ = getSessionResource();
+        }
+    }
 
-    TF_CHECK_OK(bundle->session->LocalDeviceManager(&dm));
-    auto ds = dm->ListDevices();
-    if (ds.empty())
-        return tensorflow::Status(tensorflow::error::UNAVAILABLE,
-                                  "ListDevices Empty!");
+    {
+        // run grpah if necessary...
+        // tensorflow::Tensor tensor(tensorflow::DT_FLOAT,
+        //                           tensorflow::TensorShape({2}));
+        // tensor.vec<float>()(0) = 20.f;
+        // tensor.vec<float>()(1) = 6000.f;
+        // std::vector<tensorflow::Tensor> outputs;
+        // auto status =
+        //     bundle->session->Run({{"user_emb", tensor}}, {"ee"}, {},
+        //     &outputs);
+        // // LOG(INFO) << "output.size = " << outputs.size() << "\n"
+        // //           << bundle->meta_graph_def.Utf8DebugString();
 
-    auto ld = dynamic_cast<tensorflow::LocalDevice*>(ds.front());
-    ld->session_resource_ = getSessionResource();
+        // LOG(INFO) << status.ToString();
+
+        // if (status.ok()) {
+        //     for (const auto& record : outputs) {
+        //         LOG(INFO) << record.DebugString(100);
+        //     }
+        // }
+    }
+
+    tfss->session = std::move(bundle->session);
 
     sessions_.emplace(biz_name, tfss);
     return Status::OK();

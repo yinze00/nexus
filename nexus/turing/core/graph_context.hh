@@ -17,8 +17,8 @@ class GraphBiz;
 
 struct GraphContextArgs {
     // int64_t run_id{0};
-    tensorflow::SessionResourcePtr session_resource{nullptr};
-    tensorflow::RunOptions run_options;
+    tensorflow::SessionResourcePtr       session_resource{nullptr};
+    tensorflow::RunOptions               run_options;
     std::shared_ptr<tensorflow::Session> session{nullptr};
 };
 
@@ -40,6 +40,7 @@ struct GraphContext {
 
   protected:
     virtual bool doParseRequestBody() { return true; }
+
     bool parseRequest() { return doParseRequestBody(); }
 
     // void prepareQueryResource(std::shared_ptr<GraphBiz> biz,
@@ -50,14 +51,18 @@ struct GraphContext {
         std::vector<std::pair<std::string, tensorflow::Tensor>>& inputs);
 
   public:
+    // Graph Rep Rsp
     const GraphRequest* req{nullptr};
-    GraphResponse* rsp{nullptr};
+    GraphResponse*      rsp{nullptr};
 
+    // TF Runtime
+    int64_t                         run_id{0};
+    tensorflow::RunOptions          run_options;
+    tensorflow::RunMetadata         run_metas;
     std::vector<tensorflow::Tensor> outputs;
 
-    int64_t run_id{0};
-    tensorflow::SessionResourcePtr session_resource{nullptr};
-    tensorflow::QueryResourcePtr query_resource{nullptr};
+    tensorflow::SessionResourcePtr       session_resource{nullptr};
+    tensorflow::QueryResourcePtr         query_resource{nullptr};
     std::shared_ptr<tensorflow::Session> session{nullptr};
 };
 

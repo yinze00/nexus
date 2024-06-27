@@ -25,9 +25,9 @@ struct BizInfo {
 
 class GraphBiz {
   public:
-    GraphBiz() = default;
-    virtual ~GraphBiz() = default;
-    GraphBiz(const GraphBiz&) = delete;
+    GraphBiz()                           = default;
+    virtual ~GraphBiz()                  = default;
+    GraphBiz(const GraphBiz&)            = delete;
     GraphBiz& operator=(const GraphBiz&) = delete;
 
   public:
@@ -39,8 +39,8 @@ class GraphBiz {
         return getSession(biz_name);
     }
     std::shared_ptr<tensorflow::Session> getSession(const std::string&) const;
-    std::shared_ptr<TFSession> getTFSession() const {
-        return getTFSession(biz_name);
+    std::shared_ptr<TFSession>           getTFSession() const {
+                  return getTFSession(biz_name);
     }
     std::shared_ptr<TFSession> getTFSession(const std::string& model) const {
         auto it = sessions_.find(model);
@@ -75,7 +75,7 @@ class GraphBiz {
 
     mutable std::atomic<size_t> session_id = {0};
 
-    SessionResourcePtr session_resource_{nullptr};
+    SessionResourcePtr         session_resource_{nullptr};
     tensorflow::SessionOptions options;
 
     std::unordered_map<std::string, TFSessionPtr> sessions_;

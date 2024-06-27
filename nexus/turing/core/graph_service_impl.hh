@@ -33,14 +33,14 @@ class GraphServiceImpl : public GraphManager {
                           ::google::protobuf::Closure* done);
 
     virtual GraphContext* doCreateContext(const GraphContextArgs& args,
-                                          const GraphRequest* request,
-                                          GraphResponse* response) {
+                                          const GraphRequest*     request,
+                                          GraphResponse*          response) {
         return new GraphContext(args, request, response);
     }
     template <typename ReqT, typename RspT>
     void process(::google::protobuf::RpcController* controller,
                  const ReqT* request, RspT* respons,
-                 ::google::protobuf::Closure* done,
+                 ::google::protobuf::Closure*  done,
                  CreateContextFunc<ReqT, RspT> func = nullptr);
 
   protected:
@@ -50,22 +50,23 @@ class GraphServiceImpl : public GraphManager {
     }
 
   private:
-    std::atomic_int_fast64_t session_id_{0};
-    mutable int64_t max_session_{10};
-    GraphBizPtr biz_{nullptr};
+    std::atomic_int_fast64_t  session_id_{0};
+    mutable int64_t           max_session_{10};
+    GraphBizPtr               biz_{nullptr};
     common::RunIDAllocatorPtr run_id_allocator;
 };
 
 template <typename ReqT, typename RspT>
 void GraphServiceImpl::process(::google::protobuf::RpcController* controller,
                                const ReqT* request, RspT* response,
-                               ::google::protobuf::Closure* done,
+                               ::google::protobuf::Closure*  done,
                                CreateContextFunc<ReqT, RspT> func) {
     auto cur = session_id_.fetch_add(1, std::memory_order_relaxed);
 
     auto runid = run_id_allocator->get();
-    GraphContextArgs argv = biz_->getGraphContextArgs();
-    auto qrp = biz_->prepareQueryResource();
+
+    GraphContextArgs             argv = biz_->getGraphContextArgs();
+    tensorflow::QueryResourcePtr qrp = biz_->prepareQueryResource();
 
     argv.run_options.set_run_id(runid);
     argv.session_resource = biz_->getSessionResource();

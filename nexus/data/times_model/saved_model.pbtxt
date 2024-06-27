@@ -67,7 +67,7 @@ meta_graphs {
       input: "cc"
     },
     node {
-      name: "ee"
+      name: "recall_results"
       op: "TimeThree"
       attr {
         key: "T"
@@ -76,6 +76,11 @@ meta_graphs {
         }
       }
       input: "bb"
+    },
+    node {
+      name: "done"
+      op: "NoOp"
+      input: "^recall_results"
     }
   }
 }

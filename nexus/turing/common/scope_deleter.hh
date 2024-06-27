@@ -44,7 +44,7 @@ class ScopeDeleter {
     T* operator->() const { return _ptr; }
 
   private:
-    T* _ptr;
+    T*      _ptr;
     Deleter _deleter;
 };
 

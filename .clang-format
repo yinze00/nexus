@@ -20,3 +20,6 @@ BasedOnStyle: Google
 DerivePointerAlignment: false
 IndentWidth:     4
 AccessModifierOffset: -2
+
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
