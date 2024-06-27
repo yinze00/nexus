@@ -14,21 +14,26 @@ GraphContextArgs GraphBiz::getGraphContextArgs() {
     GraphContextArgs args;
 
     args.session_resource = getSessionResource();
-
-    args.sesson = getSession();
+    args.session = getSession();
 
     // args.run_options.set_run_id(int64_t value)
-
 
     LOG(INFO) << "args done!";
 
     return args;
 }
 
+tensorflow::QueryResourcePtr GraphBiz::prepareQueryResource() {
+    auto qry = std::make_shared<tensorflow::QueryResource>();
+    return qry;
+}
+
 Status GraphBiz::init(const std::string& name) {
     TF_CHECK_OK(loadGraph());
 
     auto tfss = getTFSession();
+
+    createSessionResource(1024);
 
     return Status::OK();
 }

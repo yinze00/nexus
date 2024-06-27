@@ -32,11 +32,11 @@ class GraphServiceImpl : public GraphManager {
                           const GraphRequest* request, GraphResponse* response,
                           ::google::protobuf::Closure* done);
 
-    GraphContext* createContext(const GraphContextArgs& args,
-                                const GraphRequest* req, GraphResponse* rsp) {
-        return doCreateContext(args, req, rsp);
+    virtual GraphContext* doCreateContext(const GraphContextArgs& args,
+                                          const GraphRequest* request,
+                                          GraphResponse* response) {
+        return new GraphContext(args, request, response);
     }
-
     template <typename ReqT, typename RspT>
     void process(::google::protobuf::RpcController* controller,
                  const ReqT* request, RspT* respons,
@@ -44,13 +44,9 @@ class GraphServiceImpl : public GraphManager {
                  CreateContextFunc<ReqT, RspT> func = nullptr);
 
   protected:
-    virtual GraphContext* doCreateContext(const GraphContextArgs& args,
-                                          const GraphRequest* request,
-                                          GraphResponse* response) {
-        return new GraphContext();
-        // return biz_->createContext();
-
-        // auto args = biz_->getGraphContextArgs();
+    GraphContext* createContext(const GraphContextArgs& args,
+                                const GraphRequest* req, GraphResponse* rsp) {
+        return doCreateContext(args, req, rsp);
     }
 
   private:
@@ -69,10 +65,15 @@ void GraphServiceImpl::process(::google::protobuf::RpcController* controller,
 
     auto runid = run_id_allocator->get();
     GraphContextArgs argv = biz_->getGraphContextArgs();
+    auto qrp = biz_->prepareQueryResource();
 
     argv.run_options.set_run_id(runid);
-
+    argv.session_resource = biz_->getSessionResource();
     auto ctx = createContext(argv, request, response);
+
+    ctx->addQueryResource(runid, qrp);
+
+    // ctx->prepareQueryResource(biz_);
 
     ctx->run([this, response, done, runid](ErrorInfo&) -> void {
         done->Run();

@@ -5,9 +5,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "graph_context.hh"
 #include "nexus/turing/common/session_resource.hh"
 #include "nexus/turing/common/tf_session.hh"
+#include "nexus/turing/core/graph_context.hh"
 #include "tensorflow/core/common_runtime/direct_session.h"
 #include "tensorflow/core/framework/tensor.h"
 
@@ -37,25 +37,25 @@ class GraphBiz {
 
     std::shared_ptr<tensorflow::Session> getSession() const {
         return getSession(biz_name);
-    };
+    }
     std::shared_ptr<tensorflow::Session> getSession(const std::string&) const;
     std::shared_ptr<TFSession> getTFSession() const {
         return getTFSession(biz_name);
-    };
+    }
     std::shared_ptr<TFSession> getTFSession(const std::string& model) const {
-        LOG(INFO) << "gettfsession: " << model << " sessions_.size = " << sessions_.size();
         auto it = sessions_.find(model);
-        std::cout << model << std::boolalpha << (it == sessions_.end());
         if (it != sessions_.end()) {
             return it->second;
         }
-    };
+        return nullptr;
+    }
     void putTFSession(const std::string&, std::shared_ptr<TFSession>);
 
     SessionResourcePtr getSessionResource() { return session_resource_; }
 
-    // graph
+    tensorflow::QueryResourcePtr prepareQueryResource();
 
+    // graph
     GraphContextArgs getGraphContextArgs();
 
   protected:

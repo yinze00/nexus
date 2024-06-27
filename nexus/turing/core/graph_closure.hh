@@ -9,12 +9,12 @@ namespace nexus {
 namespace turing {
 
 // don->run() callback closure;
-template <typename ResponseType>
+// template <typename ResponseType>
 class GraphClosure : public google::protobuf::Closure {
   public:
     GraphClosure(GraphRequest* graph_req, GraphResponse* graph_rsp,
-                 ResponseType* rsp, google::protobuf::Closure* done)
-        : ureq_(graph_req), ursp_(graph_rsp), rsp_(rsp), done_(done) {}
+                 void* rsp, google::protobuf::Closure* done)
+        : ureq_(graph_req), ursp_(graph_rsp), done_(done), rsp_(rsp) {}
 
     void Run() override {
         fill_rsp();
@@ -24,11 +24,11 @@ class GraphClosure : public google::protobuf::Closure {
 
     virtual void fill_rsp() = 0;
 
-  private:
+  protected:
     std::unique_ptr<GraphRequest> ureq_;
     std::unique_ptr<GraphResponse> ursp_;
     google::protobuf::Closure* done_;
-    ResponseType* rsp_;
+    void* rsp_;
 };
 }  // namespace turing
 }  // namespace nexus

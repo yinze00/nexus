@@ -8,16 +8,18 @@
 #include <vector>
 
 #include "nexus/turing/common/op_util.hh"
+// #include "nexus/turing/core/graph_biz.hh"
 #include "nexus/turing/proto/error_code.pb.h"
 namespace nexus {
 namespace turing {
+
+class GraphBiz;
 
 struct GraphContextArgs {
     // int64_t run_id{0};
     tensorflow::SessionResourcePtr session_resource{nullptr};
     tensorflow::RunOptions run_options;
-
-    std::shared_ptr<tensorflow::Session> sesson{nullptr};
+    std::shared_ptr<tensorflow::Session> session{nullptr};
 };
 
 struct GraphContext {
@@ -32,6 +34,17 @@ struct GraphContext {
   public:
     virtual void run(CallBack);
 
+    void addQueryResource(int64_t id, tensorflow::QueryResourcePtr qry) {
+        session_resource->add_query_resource(id, qry);
+    }
+
+  protected:
+    virtual bool doParseRequestBody() { return true; }
+    bool parseRequest() { return doParseRequestBody(); }
+
+    // void prepareQueryResource(std::shared_ptr<GraphBiz> biz,
+    //                           tensorflow::RunOptions& opts);
+
   private:
     virtual bool fill_inputs(
         std::vector<std::pair<std::string, tensorflow::Tensor>>& inputs);
@@ -45,6 +58,7 @@ struct GraphContext {
     int64_t run_id{0};
     tensorflow::SessionResourcePtr session_resource{nullptr};
     tensorflow::QueryResourcePtr query_resource{nullptr};
+    std::shared_ptr<tensorflow::Session> session{nullptr};
 };
 
 }  // namespace turing
