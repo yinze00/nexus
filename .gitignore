@@ -3,3 +3,5 @@ bazel-*
 .github/
 compile_commands.json
 *.dat
+*.so
+tf.py

@@ -36,6 +36,8 @@ public:
 public:
   std::vector<QueryResourcePtr> query_resource;
 
+  // annop::common::CSingleton<annop::common::ANNIndexHolder>::instance;
+
 private:
   int max_session_;
   mutable nexus::utils::Spinlock lock_;
