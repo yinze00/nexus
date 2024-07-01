@@ -104,6 +104,16 @@ REGISTER_OP("IndirectSortAndTopkOp")
         return Status::OK();
     });
 
+REGISTER_OP("ResultConstructOp")
+    .Input("k: int32")
+    .Input("v: float")
+    .Output("results_labels: int32")
+    .Output("results_scores: float")
+    .Attr("index_name: string")
+    .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+        return Status::OK();
+    });
+
 REGISTER_OP("MLPOp")
     .Input("user_emb: float")
     .Input("item_emb: float")
