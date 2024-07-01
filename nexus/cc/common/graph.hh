@@ -141,6 +141,8 @@ class Graph {
     uint64_t n_{0};  // number of elements
     uint32_t m_{0};  // number of neighbors per element
 
+    uint32_t entry_point;
+
     LinkedListUPtrType    linklist_;
     std::vector<uint64_t> labels_;
     std::vector<size_t>   offsets_;  // offset of item-i in the `linklist_`

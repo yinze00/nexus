@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 
+#include "nexus/turing/common/op_util.hh"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/shape_inference.h"
 
@@ -12,7 +13,16 @@ class RequestInitOp : public OpKernel {
         OP_REQUIRES_OK(ctx, ctx->GetAttr("index_name", &index_name_));
     }
 
-    void Compute(OpKernelContext* ctx) {}
+    void Compute(OpKernelContext* ctx) {
+        auto session_resource = GET_SESSION_RESOURCE(ctx);
+        auto entry_point =
+            session_resource->get_index(index_name_)->neis_->entry_point;
+        Tensor* out = nullptr;
+
+        OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {1}, &out));
+
+        out->flat<uint32_t>()(0) = entry_point;
+    }
 
   private:
     std::string index_name_;
