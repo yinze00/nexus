@@ -4,7 +4,7 @@
  * @Date: 2024-04-21 18:27:19
  * @LastEditTime: 2024-04-21
  */
-
+#pragma once
 #include <faiss/Index.h>
 
 #include <cstdint>

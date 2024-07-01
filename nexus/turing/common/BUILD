@@ -7,6 +7,7 @@ cc_library(
     deps = [
         "//nexus/turing/proto:graph_proto_cc",
         "//nexus/utils",
+        "//nexus/cc/common",
         "@org_tensorflow//tensorflow/core:framework",
         "@org_tensorflow//tensorflow/core:core_cpu_headers_lib",
     ]

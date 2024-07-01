@@ -9,7 +9,7 @@
 #include "tensorflow/core/lib/core/threadpool.h"
 
 namespace nexus {
-namespace turing {
+// namespace turing {
 
 #define GET_SESSION_RESOURCE(ctx)                                            \
     ({                                                                       \
@@ -41,7 +41,7 @@ namespace turing {
     ({                                                                        \
         int64_t run_id = ctx->step_id();                                      \
         auto query_resource =                                                 \
-            session_resource->getQueryResource(run_id).get();                 \
+            session_resource->get_query_resource(run_id).get();                 \
         OP_REQUIRES(ctx, query_resource,                                      \
                     errors::Unavailable("invalid query resource: ", run_id)); \
         query_resource;                                                       \
@@ -50,11 +50,11 @@ namespace turing {
 #define GET_QUERY_RESOURCE_PTR(session_resource)                              \
     ({                                                                        \
         int64_t run_id = ctx->step_id();                                      \
-        auto query_resource = session_resource->getQueryResource(run_id);     \
+        auto query_resource = session_resource->get_query_resource(run_id);     \
         OP_REQUIRES(ctx, query_resource,                                      \
                     errors::Unavailable("invalid query resource: ", run_id)); \
         query_resource;                                                       \
     })
 
-}  // namespace turing
+// }  // namespace turing
 }  // namespace nexus

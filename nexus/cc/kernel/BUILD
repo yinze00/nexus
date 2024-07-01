@@ -65,6 +65,18 @@ tf_kernel_library(
     # ]
 )
 
+tf_kernel_library(
+    name = "request_init",
+    prefix = "request_init",
+    deps = opkernel_common_deps,
+)
+
+tf_kernel_library(
+    name = "indirect_sort_and_topk",
+    prefix = "indirect_sort_and_topk",
+    deps = opkernel_common_deps,
+)
+
 cc_library(
     name = "ann_kernel",
     deps = [
@@ -73,5 +85,7 @@ cc_library(
         ":zero_out_op",
         ":gather_embeddings",
         ":gather_neighbors",
+        ":request_init",
+        ":indirect_sort_and_topk"
     ]
 )

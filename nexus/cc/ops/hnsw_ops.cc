@@ -3,6 +3,13 @@
 
 using namespace tensorflow;
 
+REGISTER_OP("RequestInitOp")
+    .Output("entry_point: int32")
+    .Attr("index_name: string")
+    .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+        return Status::OK();
+    });
+
 /*
  * OP: GatherNeighborsOp
  * Input:
@@ -49,6 +56,7 @@ REGISTER_OP("GatherEmbeddingsOp")
     .Input("internal_ids: int32")
     .Output("embeddings: float")
     .Attr("index_name: string")
+    .Attr("dim: int")
     .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
         return Status::OK();
     });
@@ -87,7 +95,7 @@ REGISTER_OP("IndirectSortAndTopkOp")
     .Output("sorted_v: U")
     .Attr("T: {int32, int64 } = DT_INT32")
     .Attr("U: {float, double} = DT_FLOAT")
-    .Attr("topk: int >= 0 = 100")
+    .Attr("topk: int >= 0 = 1000")
     .SetShapeFn([](shape_inference::InferenceContext* c) {
         shape_inference::ShapeHandle input_shape;
         TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 1, &input_shape));

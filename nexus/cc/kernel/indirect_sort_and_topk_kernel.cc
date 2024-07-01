@@ -46,14 +46,14 @@ class IndirectSortAndTopKOp : public OpKernel {
         auto sorted_k_flat = sorted_k->flat<T>();
         auto sorted_v_flat = sorted_v->flat<U>();
 
-        for (int i = 0; i < std::min(topk, kv_pairs.size()); ++i) {
+        for (int i = 0; i < std::min(static_cast<size_t>(topk), kv_pairs.size()); ++i) {
             sorted_k_flat(i) = kv_pairs[i].first;
             sorted_v_flat(i) = kv_pairs[i].second;
         }
     }
 
   private:
-    size_t topk{100};
+    int topk{100};
 };
 
 #define REGISTER_KERNEL(T, U)                            \
@@ -63,9 +63,9 @@ class IndirectSortAndTopKOp : public OpKernel {
                                 .TypeConstraint<U>("U"), \
                             IndirectSortAndTopKOp<T, U>)
 
-REGISTER_KERNEL(int32, float);
-REGISTER_KERNEL(int32, double);
-REGISTER_KERNEL(int64, float);
-REGISTER_KERNEL(int64, double);
+REGISTER_KERNEL(uint32, float);
+REGISTER_KERNEL(uint32, double);
+REGISTER_KERNEL(uint64, float);
+REGISTER_KERNEL(uint64, double);
 
 #undef REGISTER_KERNEL

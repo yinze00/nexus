@@ -82,8 +82,6 @@ class FaissHNSWAdaptor : public Adaptor {
                 }
 
                 hnsw->hnsw.print_neighbor_stats(level);
-
-                // hindex->embedding_->set_embeddings(stor, size_t bytes)
             }
         }
 
