@@ -18,8 +18,8 @@ namespace common {
 // will be a singleton...
 struct ANNIndexHolder {
   public:
-    ANNIndexHolder();
-    virtual ~ANNIndexHolder();
+    ANNIndexHolder() = default;
+    virtual ~ANNIndexHolder() = default;
 
   public:
     virtual bool set_index(const std::string& index_name, AIndexPtr& index) {

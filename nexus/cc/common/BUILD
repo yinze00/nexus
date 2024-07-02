@@ -9,7 +9,7 @@ cc_library(
         "embedding.cc",
         "graph.cc",
         "index.cc",
-        "IndexCommonSingleton.cc"
+        "ANNIndexHolder.cc"
     ],
     copts = [
         "-std=c++17",

@@ -14,7 +14,7 @@ GraphContextArgs GraphBiz::getGraphContextArgs() {
     GraphContextArgs args;
 
     args.session_resource = getSessionResource();
-    args.session = getSession();
+    args.session          = getSession();
 
     // args.run_options.set_run_id(int64_t value)
 
@@ -25,14 +25,19 @@ GraphContextArgs GraphBiz::getGraphContextArgs() {
 
 tensorflow::QueryResourcePtr GraphBiz::prepareQueryResource() {
     auto qry = std::make_shared<tensorflow::QueryResource>();
-    //TODO: prepare ab_params.json
+    // TODO: prepare ab_params.json
     return qry;
 }
 
 Status GraphBiz::init(const std::string& name) {
+    LOG(INFO) << "111";
+
     createSessionResource(1024);
 
+    LOG(INFO) << "222";
+
     TF_CHECK_OK(loadGraph());
+    LOG(INFO) << "333";
 
     auto tfss = getTFSession();
 
@@ -40,7 +45,7 @@ Status GraphBiz::init(const std::string& name) {
 }
 
 Status GraphBiz::loadGraph() {
-    auto tfss = std::make_shared<TFSession>();
+    auto tfss       = std::make_shared<TFSession>();
     tfss->graphName = biz_name;
 
     tensorflow::RunOptions  ropt;
@@ -66,7 +71,7 @@ Status GraphBiz::loadGraph() {
             LOG(ERROR) << "session_resource_ = nullptr";
         }
         for (auto d : ds) {
-            auto ld = dynamic_cast<tensorflow::LocalDevice*>(d);
+            auto ld               = dynamic_cast<tensorflow::LocalDevice*>(d);
             ld->session_resource_ = getSessionResource();
         }
     }

@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
     auto bundle = std::make_shared<SavedModelBundle>();
 
     tensorflow::SessionOptions sessionOptions;
-    tensorflow::RunOptions runOptions;
+    tensorflow::RunOptions     runOptions;
 
     LOG(INFO) << "Start to load model from " << FLAGS_modelpath;
 
@@ -65,14 +65,19 @@ int main(int argc, char** argv) {
 
     std::vector<std::pair<std::string, tensorflow::Tensor>> feedInputs = {
         {"user_emb", tensor}};
-    std::vector<std::string> fetches = {"ee"};
+    std::vector<std::string> fetches = {"recall_results"};
 
     std::vector<tensorflow::Tensor> outputs;
 
-    auto status = bundle->session->Run(feedInputs, fetches, {}, &outputs);
+    auto status = bundle->session->Run(feedInputs, fetches, {"done"}, &outputs);
+
+    // ... and print out it's predictions.
+    for (const auto& record : outputs) {
+        LOG(INFO) << record.DebugString(100);
+    }
 
     LOG(INFO) << "Session Run for the 2rd time";
-    status = bundle->session->Run(feedInputs, fetches, {}, &outputs);
+    status = bundle->session->Run(feedInputs, fetches,{"done"}, &outputs);
 
     TF_CHECK_OK(status);
 

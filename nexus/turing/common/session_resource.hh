@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "nexus/cc/common/IndexCommonSingleton.hh"
+#include "nexus/cc/common/ANNIndexHolder.hh"
 #include "nexus/cc/common/index.hh"
 #include "nexus/cc/common/singleton.h"
 #include "nexus/utils/lock.hh"
@@ -15,6 +15,11 @@
 
 #include "tensorflow/core/framework/tensor.h"
 
+namespace annop {
+namespace common {
+struct ANNIndexHolder;
+}
+}  // namespace annop
 namespace tensorflow {
 
 using annop::common::AIndexPtr;

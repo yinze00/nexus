@@ -4,8 +4,8 @@
 #include <cstring>
 #include <mutex>
 
-#include "nexus/cc/common/IndexCommonSingleton.hh"
-#include "nexus/cc/common/singleton.h"
+// #include "nexus/cc/common/ANNIndexHolder.hh"
+// #include "nexus/cc/common/singleton.h"
 #include "tensorflow/core/framework/op_kernel.h"
 // #include "third_party/tensorflow/core/platform/types.h"
 using namespace tensorflow;

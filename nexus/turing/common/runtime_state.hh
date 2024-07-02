@@ -115,6 +115,8 @@ class RuntimeState {
         return run_metas_;
     }
 
+    tensorflow::Tensor user_emb;
+
   private:
     std::vector<std::shared_ptr<nexus::turing::NamedRunMetadata>> run_metas_;
 

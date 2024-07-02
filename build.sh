@@ -15,4 +15,6 @@
 
 
 
-bazelisk build //nexus  --verbose_failures --config=use-lld
+# bazelisk build //nexus  --verbose_failures --config=use-lld
+
+bazelisk build //nexus/test/...  --verbose_failures --config=use-lld

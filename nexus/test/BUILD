@@ -10,6 +10,8 @@ cc_binary(
     deps = [
         "//nexus:nexus",
         "//nexus/cc:time_two_ops_op_lib",
+        "//nexus/cc/common",
+        "//nexus/turing/core",
         "@org_tensorflow//tensorflow/core:framework",
         "@org_tensorflow//tensorflow/cc:client_session",
         "@org_tensorflow//tensorflow/cc:cc_ops",

@@ -49,20 +49,20 @@ tf_proto_library(
     ],
 )
 
-tf_generate_proto_text_sources(
-    name = "protos_graph_text",
-    srcs = GRAPH_PROTOS,
-    srcs_relative_dir = "nexus/turing/proto/",
-    visibility = ["//visibility:public"],
-    deps = [
+# tf_generate_proto_text_sources(
+#     name = "protos_graph_text",
+#     srcs = GRAPH_PROTOS,
+#     srcs_relative_dir = "nexus/turing/proto/",
+#     visibility = ["//visibility:public"],
+#     deps = [
 
-    ]
-)
+#     ]
+# )
 
 cc_library(
     name = "proto",
     hdrs = [
-        "protos_graph_text_hdrs"
+        # "protos_graph_text_hdrs"
     ],
     deps = [
         ":graph_proto_cc"

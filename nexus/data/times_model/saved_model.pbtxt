@@ -75,7 +75,7 @@ meta_graphs {
           type: DT_FLOAT
         }
       }
-      input: "bb"
+      input: "dd"
     },
     node {
       name: "done"
