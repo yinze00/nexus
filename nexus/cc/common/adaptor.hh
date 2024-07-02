@@ -45,7 +45,7 @@ class FaissHNSWAdaptor : public Adaptor {
                          .n     = static_cast<uint64_t>(hnsw->ntotal),
                          .dim   = hnsw->d,
                          .h     = hnsw->hnsw.max_level,
-                         .nn = hnsw->hnsw.neighbors.size() * sizeof(uint32_t)};
+                         .nn = hnsw->hnsw.neighbors.size()};
 
         auto hindex = std::make_shared<AIndex>(std::string("hnsw"), conf);
         LOG(INFO) << hnsw->ntotal << ", " << hnsw->d << " " << hindex->name();
@@ -75,7 +75,7 @@ class FaissHNSWAdaptor : public Adaptor {
         //     sizeof(uint32_t));
         {
             // prepare h-nsw neis
-            for (auto level = 0; level < conf.h; ++level) {
+            for (auto level = 0; level <= conf.h; ++level) {
                 auto cum_nb_neighbors = hnsw->hnsw.cum_nb_neighbors(level);
 
                 auto nb_neighbors = hnsw->hnsw.nb_neighbors(level);
