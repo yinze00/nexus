@@ -18,13 +18,13 @@ namespace annop {
 namespace common {
 
 AIndex::AIndex(const std::string& name, const IndexConfig& conf) : name_(name) {
-    neis_ = std::make_unique<HGraph>(conf.itype, conf.n, conf.dim, conf.h);
+    neis_ = std::make_unique<HGraph>(conf.itype, conf.n, conf.nn);
     embedding_ =
         std::make_unique<EmbeddingHolder>(conf.dtype, conf.n, conf.dim);
 }
 
 AIndex::AIndex(int n, int dim) {
-    neis_ = std::make_unique<HGraph>(DataType::DT_UINT32, n, dim, 1);
+    neis_ = std::make_unique<HGraph>(DataType::DT_UINT32, n, n * dim);
     embedding_ = std::make_unique<EmbeddingHolder>(DataType::DT_FLOAT, n, dim);
 }
 

@@ -64,7 +64,9 @@ struct HierachyLinkedList<
     : public Buffer {
   public:
     explicit HierachyLinkedList(T n, size_t total)
-        : Buffer(new T[total]), n_(n) {}
+        : Buffer(new T[total]), n_(n), nn_(total) {
+        LOG(INFO) << "nn_: " << nn_ << " n_ " << n_;
+    }
     ~HierachyLinkedList() = default;
 
     inline std::tuple<int, T*> gather_neighbors(size_t index, int level) {
@@ -76,10 +78,11 @@ struct HierachyLinkedList<
     }
 
   public:
-    T   n_;
-    int m_;
-    int m0_;
-    int max_level_;
+    T      n_;
+    size_t nn_;
+    int    m_;
+    int    m0_;
+    int    max_level_;
 };
 
 template <typename T>
@@ -124,7 +127,7 @@ class Graph {
 
     void set_labels(std::vector<uint64_t>& labels);
 
-    virtual void set_neis(LinkedListUPtrType&& ptr, int level = 0) {
+    void set_neis(LinkedListUPtrType&& ptr, int level = 0) {
         if (!level) linklist_ = std::move(ptr);
     }
 
@@ -154,9 +157,12 @@ class HGraph : public Graph {
     using HierachyLinkedListUPtrType = HierachyLinkedListUPtr<uint32_t>;
 
   public:
-    explicit HGraph(DataType type, uint64_t n, int m, int h)
-        : Graph(type, n, m) {
-        h_linklist_.reset(new HierachyLinkedList<uint32_t>(n_, m_));
+    explicit HGraph(DataType type, uint64_t n, size_t nn) : Graph(type, n, 0) {
+        h_linklist_.reset(new HierachyLinkedList<uint32_t>(n_, nn));
+    }
+
+    virtual ~HGraph() {
+      if(h_linklist_) h_linklist_->Unref();
     }
 
     std::pair<size_t /*begin offset*/, size_t /*end offset*/> neighbors_range(
@@ -168,14 +174,18 @@ class HGraph : public Graph {
 
     uint32_t* gather_neighbors(size_t index) override;
 
-    inline int to_touch_neighbors_at_level(size_t level) const {
-        return to_touch_neighbors_at_level_[level];
+    virtual void set_neis(HierachyLinkedListUPtrType&& ptr, int level = 0) {
+        h_linklist_ = std::move(ptr);
     }
 
-  protected:
-    HierachyLinkedListUPtrType h_linklist_;  // hierachy linklist
-    std::vector<int>           levels_;      // all item's layer N.O.
-    std::vector<int>           to_touch_neighbors_at_level_;  // 2M, M, M, ..
+    inline int to_touch_neighbors_at_level(size_t level) const {
+        return ones_neis_at_level_[level];
+    }
+
+  public:
+    HierachyLinkedListUPtrType h_linklist_;          // hierachy linklist
+    std::vector<int>           levels_;              // all item's layer N.O.
+    std::vector<int>           ones_neis_at_level_;  // 2M, M, M, ..
 
     // std::vector<LinkedListUPtrType> non_0_linklist_;
 };

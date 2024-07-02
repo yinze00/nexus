@@ -24,6 +24,7 @@ struct ANNIndexHolder {
   public:
     virtual bool set_index(const std::string& index_name, AIndexPtr& index) {
         std::lock_guard<std::mutex> lock(mtx_);
+        LOG(INFO) << "set " << index_name;
         bool is_updated = index_map_.find(index_name) != index_map_.end();
         index_map_[index_name] = index;
         return is_updated;

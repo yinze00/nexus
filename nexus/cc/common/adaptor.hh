@@ -6,6 +6,7 @@
 #include <faiss/index_io.h>
 
 #include <cstdint>
+#include <cstring>
 #include <memory>
 #include <string>
 
@@ -41,9 +42,10 @@ class FaissHNSWAdaptor : public Adaptor {
 
         IndexConfig conf{.itype = tensorflow::DT_INT32,
                          .dtype = tensorflow::DT_FLOAT,
-                         .n = static_cast<uint64_t>(hnsw->ntotal),
-                         .dim = hnsw->d,
-                         .h = hnsw->hnsw.max_level};
+                         .n     = static_cast<uint64_t>(hnsw->ntotal),
+                         .dim   = hnsw->d,
+                         .h     = hnsw->hnsw.max_level,
+                         .nn = hnsw->hnsw.neighbors.size() * sizeof(uint32_t)};
 
         auto hindex = std::make_shared<AIndex>(std::string("hnsw"), conf);
         LOG(INFO) << hnsw->ntotal << ", " << hnsw->d << " " << hindex->name();
@@ -51,35 +53,52 @@ class FaissHNSWAdaptor : public Adaptor {
         hindex->embedding_->set_embeddings(storage->get_xb(),
                                            conf.dim * conf.n * sizeof(float));
 
+        auto hgraph = hindex->neis_.get();
+
+        hgraph->levels_             = hnsw->hnsw.levels;
+        hgraph->ones_neis_at_level_ = hnsw->hnsw.cum_nneighbor_per_level;
+        hgraph->offsets_            = hnsw->hnsw.offsets;
+        hgraph->n_                  = hnsw->ntotal;
+
+        auto dst = hgraph->h_linklist_->base<uint32_t>();
+        std::memcpy(dst, hnsw->hnsw.neighbors.data(),
+                    conf.nn * sizeof(uint32_t));
+        // hgraph->set_h_linklist(HierachyLinkedListUPtrType &&ptr)
+
+        // hgraph->h_linklist_.reset(
+        //     new annop::common::HierachyLinkedList<uint32>(n_,
+        //     hnsw->hnsw.neighbors.size() * sizeof(uint32_t))
+        // )
+        // std::make_unique<annop::common::HierachyLinkedList<uint32_t>,
+        // annop::common::HierachyLinkedListDeleter<uint32_t>>(
+        //     (uint32_t)hnsw->ntotal, hnsw->hnsw.neighbors.size() *
+        //     sizeof(uint32_t));
         {
             // prepare h-nsw neis
             for (auto level = 0; level < conf.h; ++level) {
-                // auto neis =
-                //     std::make_shared<annop::common::LinkedList<uint32_t>>();
                 auto cum_nb_neighbors = hnsw->hnsw.cum_nb_neighbors(level);
 
                 auto nb_neighbors = hnsw->hnsw.nb_neighbors(level);
 
-                // auto nb_num_this_level = hnsw->hnsw.
                 LOG(INFO) << SSTR(level) << SSTR(cum_nb_neighbors)
                           << SSTR(nb_neighbors);
 
-                auto levels = hnsw->hnsw.levels;
+                // auto& levels = hnsw->hnsw.levels;
 
-                auto neighbors = hnsw->hnsw.neighbors;
+                // auto& neighbors = hnsw->hnsw.neighbors;
 
-                for (auto offset = 0; offset < levels.size(); ++offset) {
-                    if (levels[offset] > level) {
-                        size_t begin, end;
-                        hnsw->hnsw.neighbor_range(offset, level, &begin, &end);
-                        std::unordered_set<int> neighset;
-                        for (size_t j = begin; j < end; j++) {
-                            if (neighbors[j] < 0) break;
-                            LOG(INFO) << SSTR(neighbors[j]);
-                            neighset.insert(neighbors[j]);
-                        }
-                    }
-                }
+                // for (auto offset = 0; offset < levels.size(); ++offset) {
+                //     if (levels[offset] > level) {
+                //         size_t begin, end;
+                //         hnsw->hnsw.neighbor_range(offset, level, &begin, &end);
+                //         // std::unordered_set<int> neighset;
+                //         for (size_t j = begin; j < end; j++) {
+                //             if (neighbors[j] < 0) break;
+                //             // LOG(INFO) << SSTR(neighbors[j]);
+                //             // neighset.insert(neighbors[j]);
+                //         }
+                //     }
+                // }
 
                 hnsw->hnsw.print_neighbor_stats(level);
             }

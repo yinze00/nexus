@@ -4,4 +4,5 @@ bazel-*
 compile_commands.json
 *.dat
 *.so
+core
 tf.py

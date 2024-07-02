@@ -25,7 +25,7 @@ class Buffer : public tensorflow::core::RefCounted {
       // LOG(INFO) << "new a Buffer " << this  << std::endl;
     }
     ~Buffer() override {
-      // LOG(INFO) << "destroy Buffer " << this  << std::endl;
+      LOG(INFO) << "destroy Buffer " << this  << std::endl;
     }
 
     void* data() const noexcept { return data_; }

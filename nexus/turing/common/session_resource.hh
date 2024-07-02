@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "nexus/cc/common/ANNIndexHolder.hh"
+#include "nexus/cc/common/adaptor.hh"
 #include "nexus/cc/common/index.hh"
 #include "nexus/cc/common/singleton.h"
 #include "nexus/utils/lock.hh"
@@ -33,6 +34,16 @@ class SessionResource {
 
   public:
     struct IndexManager {
+        IndexManager() {
+            nexus::common::FaissHNSWAdaptor adaptor;
+
+            auto index = adaptor.tansform(
+                "/home/yinze/dev/zenith/nexus/nexus/data/hnsw_model/"
+                "data/hnsw_1000000.dat");
+
+            annop::common::CSingleton<ANNIndexHolder>::instance()->set_index(
+                "hnsw_demo", index);
+        }
         AIndexPtr get_index(const std::string& model) {
             return annop::common::CSingleton<ANNIndexHolder>::instance()
                 ->get_index(model);
