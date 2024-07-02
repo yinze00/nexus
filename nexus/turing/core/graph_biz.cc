@@ -52,7 +52,7 @@ Status GraphBiz::loadGraph() {
     tensorflow::RunMetadata metas;
 
     std::string hnsw_model_dir =
-        "/home/yinze/dev/zenith/nexus/nexus/data/times_model";
+        "/home/yinze/dev/zenith/nexus/nexus/data/hnsw_model";
     auto bundle = std::make_shared<tensorflow::SavedModelBundle>();
 
     TF_CHECK_OK(tensorflow::LoadSavedModel(options, ropt, hnsw_model_dir,

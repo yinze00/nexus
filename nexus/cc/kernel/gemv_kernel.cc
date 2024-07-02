@@ -50,6 +50,6 @@ public:
 
 REGISTER_KERNEL(float);
 REGISTER_KERNEL(double);
-REGISTER_KERNEL(int32);
-REGISTER_KERNEL(int64);
+// REGISTER_KERNEL(int32);
+// REGISTER_KERNEL(int64);
 } // namespace tensorflow

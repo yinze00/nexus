@@ -10,13 +10,19 @@ namespace tensorflow {
 class RequestInitOp : public OpKernel {
   public:
     explicit RequestInitOp(OpKernelConstruction* ctx) : OpKernel(ctx) {
+      LOG(INFO) << "ssssdf";
         OP_REQUIRES_OK(ctx, ctx->GetAttr("index_name", &index_name_));
     }
 
     void Compute(OpKernelContext* ctx) {
         auto session_resource = GET_SESSION_RESOURCE(ctx);
+
+        LOG(INFO) << 2334234;
+
         auto entry_point =
             session_resource->get_index(index_name_)->neis_->entry_point;
+
+        LOG(INFO) << entry_point;
         Tensor* out = nullptr;
 
         OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {1}, &out));
@@ -27,5 +33,7 @@ class RequestInitOp : public OpKernel {
   private:
     std::string index_name_;
 };
+
+REGISTER_KERNEL_BUILDER(Name("RequestInitOp").Device(DEVICE_CPU), RequestInitOp)
 
 }  // namespace tensorflow

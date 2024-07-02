@@ -72,8 +72,22 @@ tf_kernel_library(
 )
 
 tf_kernel_library(
+    name = "result_construct",
+    prefix = "result_construct",
+    deps = opkernel_common_deps,
+)
+
+
+tf_kernel_library(
     name = "indirect_sort_and_topk",
     prefix = "indirect_sort_and_topk",
+    deps = opkernel_common_deps,
+)
+
+
+tf_kernel_library(
+    name = "gemv",
+    prefix = "gemv",
     deps = opkernel_common_deps,
 )
 
@@ -86,6 +100,8 @@ cc_library(
         ":gather_embeddings",
         ":gather_neighbors",
         ":request_init",
+        ":result_construct",
+        ":gemv",
         ":indirect_sort_and_topk"
     ]
 )

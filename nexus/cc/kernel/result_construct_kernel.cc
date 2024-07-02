@@ -4,7 +4,6 @@
 #include "nexus/turing/common/op_util.hh"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/shape_inference.h"
-#include "third_party/tensorflow/core/platform/types.h"
 
 namespace tensorflow {
 
@@ -40,5 +39,8 @@ class ResultConstructOp : public OpKernel {
   private:
     std::string index_name_;
 };
+
+REGISTER_KERNEL_BUILDER(Name("ResultConstructOp").Device(DEVICE_CPU),
+                        ResultConstructOp)
 
 }  // namespace tensorflow

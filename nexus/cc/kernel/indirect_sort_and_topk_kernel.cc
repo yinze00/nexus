@@ -7,9 +7,9 @@
 using namespace tensorflow;
 
 template <typename T, typename U>
-class IndirectSortAndTopKOp : public OpKernel {
+class IndirectSortAndTopkOp : public OpKernel {
   public:
-    explicit IndirectSortAndTopKOp(OpKernelConstruction* context)
+    explicit IndirectSortAndTopkOp(OpKernelConstruction* context)
         : OpKernel(context) {
         OP_REQUIRES_OK(context, context->GetAttr("topk", &topk));
     }
@@ -57,15 +57,15 @@ class IndirectSortAndTopKOp : public OpKernel {
 };
 
 #define REGISTER_KERNEL(T, U)                            \
-    REGISTER_KERNEL_BUILDER(Name("SortTensorsByValues")  \
+    REGISTER_KERNEL_BUILDER(Name("IndirectSortAndTopkOp")  \
                                 .Device(DEVICE_CPU)      \
                                 .TypeConstraint<T>("T")  \
                                 .TypeConstraint<U>("U"), \
-                            IndirectSortAndTopKOp<T, U>)
+                            IndirectSortAndTopkOp<T, U>)
 
-REGISTER_KERNEL(uint32, float);
-REGISTER_KERNEL(uint32, double);
-REGISTER_KERNEL(uint64, float);
-REGISTER_KERNEL(uint64, double);
+REGISTER_KERNEL(int32, float);
+REGISTER_KERNEL(int32, double);
+REGISTER_KERNEL(int64, float);
+REGISTER_KERNEL(int64, double);
 
 #undef REGISTER_KERNEL
