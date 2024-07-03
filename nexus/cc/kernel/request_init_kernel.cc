@@ -17,8 +17,6 @@ class RequestInitOp : public OpKernel {
     void Compute(OpKernelContext* ctx) {
         auto session_resource = GET_SESSION_RESOURCE(ctx);
 
-        LOG(INFO) << 2334234;
-
         auto entry_point =
             session_resource->get_index(index_name_)->neis_->entry_point;
 
@@ -28,6 +26,8 @@ class RequestInitOp : public OpKernel {
         OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {1}, &out));
 
         out->flat<uint32_t>()(0) = entry_point;
+
+        LOG(INFO) << "output: " << out->DebugString(100);
     }
 
   private:

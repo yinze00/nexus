@@ -11,6 +11,9 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include "adaptor.hh"
+
+#define SSTR(x) std::string(#x) << ": " << std::to_string(x) << " "
 
 namespace annop {
 namespace common {
@@ -48,14 +51,18 @@ std::pair<size_t, size_t> Graph::neighbors_range(uint32_t idx, int level) {
 
 //// HGraph
 uint32_t* HGraph::gather_neighbors(size_t idx) {
+    // LOG(INFO) << "idx " << idx << " level " << levels_[idx];
     auto [l, r] = neighbors_range(idx, levels_[idx]);
+    // LOG(INFO) << "l " << l << " r " << r << " of  " << idx;
     return h_linklist_->gather_neighbors(l);
 }
 
 std::pair<size_t, size_t> HGraph::neighbors_range(uint32_t idx, int level) {
+    // LOG(INFO) << "offsets_.size = " << offsets_.size() << " @level " << level;
     auto offset = offsets_[idx];
-    auto l      = offset + to_touch_neighbors_at_level(level);
-    auto r      = offset + to_touch_neighbors_at_level(level + 1);
+    // LOG(INFO) << "offset " << offset << " idx " << idx;
+    auto l      = offset + ones_neis_at_level_.at(level);
+    auto r      = offset + ones_neis_at_level_.at(level + 1);
     return std::make_pair(l, r);
 }
 

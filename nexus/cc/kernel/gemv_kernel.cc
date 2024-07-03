@@ -16,8 +16,11 @@ public:
   explicit GemvOp(OpKernelConstruction *ctx) : OpKernel(ctx) {}
   void Compute(OpKernelContext *ctx) {
     // 获取输入张量
-    const Tensor &matrix = ctx->input(1);
     const Tensor &vector = ctx->input(0);
+    const Tensor &matrix = ctx->input(1);
+
+    LOG(INFO) << vector.DebugString(); 
+    LOG(INFO) << matrix.DebugString();
 
     OP_REQUIRES(ctx, matrix.dims() == 2,
                 errors::InvalidArgument("matrix must be 2-dimensional"));
@@ -28,8 +31,14 @@ public:
     int num_cols = matrix.dim_size(1);
     int num_rows = vector.dim_size(0);
 
+    LOG(INFO) << "batch_size " << batch_size << " num_cols " << num_cols << " num_rows " << num_rows;
+
+    if (num_rows != num_cols) {
+      return;
+    }
+
     Tensor *output = nullptr;
-    OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {batch_size, 1}, &output));
+    OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {batch_size}, &output));
 
     auto matrix_data = matrix.flat<T>();
     auto vector_data = vector.flat<T>();
@@ -42,6 +51,8 @@ public:
       }
       output_data(i) = sum;
     }
+
+    LOG(INFO) << output->DebugString(100);
   }
 };
 #define REGISTER_KERNEL(T)                                                     \

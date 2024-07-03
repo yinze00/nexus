@@ -24,11 +24,12 @@ class GatherNeighborsOp : public OpKernel {
 
         auto session_resource = GET_SESSION_RESOURCE(context);
 
-        auto graph_ =
+        graph_ =
             session_resource->indexmgr_.get_index(index_name_)->neis_.get();
 
         to_touch_neighbors_num_ = graph_->to_touch_neighbors_at_level(level_);
-        LOG(INFO) << "GatherNeighborsOp @" << level_ << " to_touch_neighbors_per " << to_touch_neighbors_num_;
+        LOG(INFO) << "GatherNeighborsOp @" << level_
+                  << " to_touch_neighbors_per " << to_touch_neighbors_num_;
     }
 
     void Compute(OpKernelContext* ctx);

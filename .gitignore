@@ -6,3 +6,4 @@ compile_commands.json
 *.so
 core
 tf.py
+nexus_ops_defs.so.2

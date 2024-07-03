@@ -69,6 +69,7 @@ class GraphBiz {
     tensorflow::Status loadBizInfo();
     // tensorflow::Status loadGraphDef();
     tensorflow::Status loadGraph();
+    tensorflow::Status loadModel();
 
   private:
     std::string biz_name{"default"};

@@ -22,7 +22,7 @@ node {
   attr {
     key: "dtype"
     value {
-      type: DT_INT32
+      type: DT_UINT32
     }
   }
   attr {
@@ -60,6 +60,12 @@ node {
       i: 3
     }
   }
+  attr {
+    key: "nneis"
+    value {
+      i: 128
+    }
+  }
 }
 node {
   name: "GatherEmbeddingsOp"
@@ -81,8 +87,14 @@ node {
 node {
   name: "GemvOp"
   op: "GemvOp"
-  input: "GatherEmbeddingsOp"
   input: "user_emb"
+  input: "GatherEmbeddingsOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
 }
 node {
   name: "IndirectSortAndTopkOp"
@@ -92,7 +104,7 @@ node {
   attr {
     key: "T"
     value {
-      type: DT_INT32
+      type: DT_UINT32
     }
   }
   attr {
@@ -124,6 +136,12 @@ node {
       i: 2
     }
   }
+  attr {
+    key: "nneis"
+    value {
+      i: 64
+    }
+  }
 }
 node {
   name: "GatherEmbeddingsOp_1"
@@ -145,8 +163,14 @@ node {
 node {
   name: "GemvOp_1"
   op: "GemvOp"
-  input: "GatherEmbeddingsOp_1"
   input: "user_emb"
+  input: "GatherEmbeddingsOp_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
 }
 node {
   name: "IndirectSortAndTopkOp_1"
@@ -156,7 +180,7 @@ node {
   attr {
     key: "T"
     value {
-      type: DT_INT32
+      type: DT_UINT32
     }
   }
   attr {
@@ -188,6 +212,12 @@ node {
       i: 1
     }
   }
+  attr {
+    key: "nneis"
+    value {
+      i: 64
+    }
+  }
 }
 node {
   name: "GatherEmbeddingsOp_2"
@@ -209,8 +239,14 @@ node {
 node {
   name: "GemvOp_2"
   op: "GemvOp"
-  input: "GatherEmbeddingsOp_2"
   input: "user_emb"
+  input: "GatherEmbeddingsOp_2"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
 }
 node {
   name: "IndirectSortAndTopkOp_2"
@@ -220,7 +256,7 @@ node {
   attr {
     key: "T"
     value {
-      type: DT_INT32
+      type: DT_UINT32
     }
   }
   attr {
@@ -256,8 +292,14 @@ node {
 node {
   name: "GemvOp_3"
   op: "GemvOp"
-  input: "GatherEmbeddingsOp_3"
   input: "user_emb"
+  input: "GatherEmbeddingsOp_3"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
 }
 node {
   name: "IndirectSortAndTopkOp_3"
@@ -267,7 +309,7 @@ node {
   attr {
     key: "T"
     value {
-      type: DT_INT32
+      type: DT_UINT32
     }
   }
   attr {
@@ -297,6 +339,12 @@ node {
     key: "level"
     value {
       i: -1
+    }
+  }
+  attr {
+    key: "nneis"
+    value {
+      i: 64
     }
   }
 }

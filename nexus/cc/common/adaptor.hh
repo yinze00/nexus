@@ -45,7 +45,7 @@ class FaissHNSWAdaptor : public Adaptor {
                          .n     = static_cast<uint64_t>(hnsw->ntotal),
                          .dim   = hnsw->d,
                          .h     = hnsw->hnsw.max_level,
-                         .nn = hnsw->hnsw.neighbors.size()};
+                         .nn    = hnsw->hnsw.neighbors.size()};
 
         auto hindex = std::make_shared<AIndex>(std::string("hnsw"), conf);
         LOG(INFO) << hnsw->ntotal << ", " << hnsw->d << " " << hindex->name();
@@ -59,6 +59,18 @@ class FaissHNSWAdaptor : public Adaptor {
         hgraph->ones_neis_at_level_ = hnsw->hnsw.cum_nneighbor_per_level;
         hgraph->offsets_            = hnsw->hnsw.offsets;
         hgraph->n_                  = hnsw->ntotal;
+        hgraph->entry_point         = hnsw->hnsw.entry_point;
+
+        LOG(INFO) << "neighbors: " << hnsw->hnsw.neighbors.size();
+        LOG(INFO) << "cum_neis: " << hnsw->hnsw.cum_nneighbor_per_level.size();
+        LOG(INFO) << "ones_neis_at_level.size = "
+                  << hgraph->ones_neis_at_level_.size();
+
+        int i = 0;
+        for (auto val : hgraph->ones_neis_at_level_) {
+            LOG(INFO) << "i " << i << " " << val;
+            i++;
+        }
 
         auto dst = hgraph->h_linklist_->base<uint32_t>();
         std::memcpy(dst, hnsw->hnsw.neighbors.data(),
@@ -90,7 +102,8 @@ class FaissHNSWAdaptor : public Adaptor {
                 // for (auto offset = 0; offset < levels.size(); ++offset) {
                 //     if (levels[offset] > level) {
                 //         size_t begin, end;
-                //         hnsw->hnsw.neighbor_range(offset, level, &begin, &end);
+                //         hnsw->hnsw.neighbor_range(offset, level, &begin,
+                //         &end);
                 //         // std::unordered_set<int> neighset;
                 //         for (size_t j = begin; j < end; j++) {
                 //             if (neighbors[j] < 0) break;

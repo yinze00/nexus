@@ -26,18 +26,30 @@ void GatherEmbeddingsOp::Compute(OpKernelContext* ctx) {
 
     auto neis_n = neis_t.shape().dim_size(0);
 
+    LOG(INFO) << neis_t.DebugString();
+
     Tensor* out = nullptr;
     OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {neis_n, dim_}, &out));
     auto oflat = out->flat<float>();
-    auto neis  = neis_t.flat<int32_t>();
+    auto neis  = neis_t.flat<uint32_t>();
 
     auto bytes = dim_ * sizeof(float);
 
     for (auto i = 0, offset = 0; i < neis_n; ++i) {
-        auto emb = index->embedding_->gather_embedding(neis(i));
-        std::memcpy(oflat.data() + offset, emb, bytes);
+        int32_t inner_id = static_cast<int32_t>(neis(i));
+        // LOG(INFO) << "neis(" << i << ") = " << inner_id;
+        if (inner_id != -1) {
+            auto emb = index->embedding_->gather_embedding(inner_id);
+            if (!i) {
+                // LOG(INFO) << emb[0];
+                // LOG(INFO) << emb[1];
+                // LOG(INFO) << emb[dim_];
+            }
+            std::memcpy(oflat.data() + offset, emb, bytes);
+        }
         offset += dim_;
     }
+    LOG(INFO) << "output: " << out->DebugString(100);
 }
 
 REGISTER_KERNEL_BUILDER(Name("GatherEmbeddingsOp").Device(DEVICE_CPU),

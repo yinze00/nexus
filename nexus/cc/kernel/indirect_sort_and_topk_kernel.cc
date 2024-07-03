@@ -1,8 +1,11 @@
+#include <cstddef>
+
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/core/status.h"
+// #include "third_party/tensorflow/core/platform/types.h"
 
 using namespace tensorflow;
 
@@ -18,12 +21,17 @@ class IndirectSortAndTopkOp : public OpKernel {
         const Tensor& k = context->input(0);
         const Tensor& v = context->input(1);
 
+        LOG(INFO) << "k: " << k.DebugString();
+        LOG(INFO) << "v: " << v.DebugString();
+
         OP_REQUIRES(
             context, k.shape().IsSameSize(v.shape()),
             errors::InvalidArgument("K and V must have the same shape"));
 
         auto k_flat = k.flat<T>();
         auto v_flat = v.flat<U>();
+
+        int64_t origin_nums = k_flat.size();
 
         std::vector<std::pair<T, U>> kv_pairs;
         for (int i = 0; i < k_flat.size(); ++i) {
@@ -38,15 +46,17 @@ class IndirectSortAndTopkOp : public OpKernel {
 
         Tensor* sorted_k = nullptr;
         Tensor* sorted_v = nullptr;
+
+        auto output_num = std::min(origin_nums, (int64_t)topk);
         OP_REQUIRES_OK(context,
-                       context->allocate_output(0, k.shape(), &sorted_k));
+                       context->allocate_output(0, {output_num}, &sorted_k));
         OP_REQUIRES_OK(context,
-                       context->allocate_output(1, v.shape(), &sorted_v));
+                       context->allocate_output(1, {output_num}, &sorted_v));
 
         auto sorted_k_flat = sorted_k->flat<T>();
         auto sorted_v_flat = sorted_v->flat<U>();
 
-        for (int i = 0; i < std::min(static_cast<size_t>(topk), kv_pairs.size()); ++i) {
+        for (int i = 0; i < output_num; ++i) {
             sorted_k_flat(i) = kv_pairs[i].first;
             sorted_v_flat(i) = kv_pairs[i].second;
         }
@@ -56,16 +66,16 @@ class IndirectSortAndTopkOp : public OpKernel {
     int topk{100};
 };
 
-#define REGISTER_KERNEL(T, U)                            \
-    REGISTER_KERNEL_BUILDER(Name("IndirectSortAndTopkOp")  \
-                                .Device(DEVICE_CPU)      \
-                                .TypeConstraint<T>("T")  \
-                                .TypeConstraint<U>("U"), \
+#define REGISTER_KERNEL(T, U)                             \
+    REGISTER_KERNEL_BUILDER(Name("IndirectSortAndTopkOp") \
+                                .Device(DEVICE_CPU)       \
+                                .TypeConstraint<T>("T")   \
+                                .TypeConstraint<U>("U"),  \
                             IndirectSortAndTopkOp<T, U>)
 
-REGISTER_KERNEL(int32, float);
-REGISTER_KERNEL(int32, double);
-REGISTER_KERNEL(int64, float);
-REGISTER_KERNEL(int64, double);
+REGISTER_KERNEL(uint32, float);
+REGISTER_KERNEL(uint64, double);
+REGISTER_KERNEL(uint64, float);
+REGISTER_KERNEL(uint64, double);
 
 #undef REGISTER_KERNEL

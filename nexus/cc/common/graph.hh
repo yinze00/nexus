@@ -179,7 +179,7 @@ class HGraph : public Graph {
     }
 
     inline int to_touch_neighbors_at_level(size_t level) const {
-        return ones_neis_at_level_[level];
+        return ones_neis_at_level_[level + 1] - ones_neis_at_level_[level];
     }
 
   public:
