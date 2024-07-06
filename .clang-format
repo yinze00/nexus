@@ -1,0 +1,25 @@
+# BasedOnStyle: Google
+# IndentWidth: 4
+# TabWidth: 4
+# UseTab: Never
+# ColumnLimit: 100
+# AllowShortIfStatementsOnASingleLine: false
+# BreakBeforeBraces: Allman
+# SpacesInParentheses: false
+# SpaceBeforeParens: ControlStatements
+# PointerAlignment: Left
+# DerivePointerAlignment: false
+# AlwaysBreakTemplateDeclarations: true
+# SortIncludes: true
+# IncludeBlocks: Preserve
+# SpaceAfterCStyleCast: true
+# SpaceBeforeRangeBasedForLoopColon: true
+
+
+BasedOnStyle: Google
+DerivePointerAlignment: false
+IndentWidth:     4
+AccessModifierOffset: -2
+
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true

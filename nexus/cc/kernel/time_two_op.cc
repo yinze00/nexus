@@ -1,4 +1,5 @@
 #include "time_two_op.h"
+#include "nexus/turing/common/op_util.hh"
 
 #include "tensorflow/core/framework/op_kernel.h"
 
@@ -25,6 +26,11 @@ public:
   }
 
   void Compute(OpKernelContext *context) override {
+
+    auto session_resource = GET_SESSION_RESOURCE(context);
+
+    LOG(INFO) << "session_resource " << session_resource;
+
     // Grab the input tensor
     const Tensor &input_tensor = context->input(0);
 

@@ -8,6 +8,8 @@ cc_library(
         "//nexus/cc/kernel:ann_kernel",
         "//nexus/cc:nexus_ops",
         "//nexus/cc:ops",
+        "//nexus/cc/common",
+        "//nexus/turing",
         "@org_tensorflow//tensorflow/core:framework"
     ]
 )

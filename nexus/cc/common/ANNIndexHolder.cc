@@ -1,4 +1,4 @@
-#include "IndexCommonSingleton.hh"
+#include "ANNIndexHolder.hh"
 
 #include "singleton.h"
 

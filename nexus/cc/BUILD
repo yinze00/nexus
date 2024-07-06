@@ -28,7 +28,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "time_two_ops_op_lib",
-        "nexus_ops_op_lib"
+        "nexus_ops_op_lib",
+        "hnsw_ops_op_lib"
     ],
     alwayslink = 1,
 )

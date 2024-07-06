@@ -4,7 +4,7 @@
  * @Date: 2024-04-21 18:27:19
  * @LastEditTime: 2024-04-21
  */
-
+#pragma once
 #include <faiss/Index.h>
 
 #include <cstdint>
@@ -26,8 +26,9 @@ struct IndexConfig {
     DataType itype;
     DataType dtype;
     uint64_t n;
-    int dim;
-    int h;
+    int      dim;
+    int      h;
+    size_t   nn;
 };
 
 class AIndex {
@@ -43,8 +44,8 @@ class AIndex {
     std::string name() { return name_; }
 
   public:
-    std::string name_{"default"};
-    std::unique_ptr<HGraph> neis_;
+    std::string                      name_{"default"};
+    std::unique_ptr<HGraph>          neis_;
     std::unique_ptr<EmbeddingHolder> embedding_;
 };
 
@@ -55,7 +56,7 @@ struct Index {
     using Inner_ID_Type = uint32_t;
 
   public:
-    Index() = default;
+    Index()  = default;
     ~Index() = default;
     Index(const std::string& name, uint32_t dim, uint64_t n)
         : dim_(dim), n_(n), index_name_(name) {}
@@ -73,7 +74,7 @@ struct Index {
 
     virtual std::vector<T> GatherCandidates(
         const std::vector<Inner_ID_Type>& ids,
-        std::vector<Inner_ID_Type>& candidates) = 0;
+        std::vector<Inner_ID_Type>&       candidates) = 0;
 
     virtual std::vector<Inner_ID_Type> GatherCandidates(
         const std::vector<Inner_ID_Type>& ids) {
@@ -86,10 +87,10 @@ struct Index {
     // Getter,Setter.
 
   public:
-    uint32_t dim_;                // dimensions
-    uint64_t n_;                  // the numebr of elemnts
+    uint32_t       dim_;          // dimensions
+    uint64_t       n_;            // the numebr of elemnts
     std::vector<U> external_ids;  // inner id to external id;
-    std::string index_name_{"default"};
+    std::string    index_name_{"default"};
 };
 
 template <typename T, typename U>

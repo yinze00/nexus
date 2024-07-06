@@ -1,0 +1,370 @@
+node {
+  name: "user_emb"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+        unknown_rank: true
+      }
+    }
+  }
+}
+node {
+  name: "hints"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_UINT32
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+        unknown_rank: true
+      }
+    }
+  }
+}
+node {
+  name: "RequestInitOp"
+  op: "RequestInitOp"
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+}
+node {
+  name: "GatherNeighborsOp"
+  op: "GatherNeighborsOp"
+  input: "RequestInitOp"
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+  attr {
+    key: "level"
+    value {
+      i: 3
+    }
+  }
+  attr {
+    key: "nneis"
+    value {
+      i: 128
+    }
+  }
+}
+node {
+  name: "GatherEmbeddingsOp"
+  op: "GatherEmbeddingsOp"
+  input: "GatherNeighborsOp"
+  attr {
+    key: "dim"
+    value {
+      i: 64
+    }
+  }
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+}
+node {
+  name: "GemvOp"
+  op: "GemvOp"
+  input: "user_emb"
+  input: "GatherEmbeddingsOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "IndirectSortAndTopkOp"
+  op: "IndirectSortAndTopkOp"
+  input: "GatherNeighborsOp"
+  input: "GemvOp"
+  attr {
+    key: "T"
+    value {
+      type: DT_UINT32
+    }
+  }
+  attr {
+    key: "U"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "topk"
+    value {
+      i: 1000
+    }
+  }
+}
+node {
+  name: "GatherNeighborsOp_1"
+  op: "GatherNeighborsOp"
+  input: "IndirectSortAndTopkOp"
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+  attr {
+    key: "level"
+    value {
+      i: 2
+    }
+  }
+  attr {
+    key: "nneis"
+    value {
+      i: 64
+    }
+  }
+}
+node {
+  name: "GatherEmbeddingsOp_1"
+  op: "GatherEmbeddingsOp"
+  input: "GatherNeighborsOp_1"
+  attr {
+    key: "dim"
+    value {
+      i: 64
+    }
+  }
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+}
+node {
+  name: "GemvOp_1"
+  op: "GemvOp"
+  input: "user_emb"
+  input: "GatherEmbeddingsOp_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "IndirectSortAndTopkOp_1"
+  op: "IndirectSortAndTopkOp"
+  input: "GatherNeighborsOp_1"
+  input: "GemvOp_1"
+  attr {
+    key: "T"
+    value {
+      type: DT_UINT32
+    }
+  }
+  attr {
+    key: "U"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "topk"
+    value {
+      i: 1000
+    }
+  }
+}
+node {
+  name: "GatherNeighborsOp_2"
+  op: "GatherNeighborsOp"
+  input: "IndirectSortAndTopkOp_1"
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+  attr {
+    key: "level"
+    value {
+      i: 1
+    }
+  }
+  attr {
+    key: "nneis"
+    value {
+      i: 64
+    }
+  }
+}
+node {
+  name: "GatherEmbeddingsOp_2"
+  op: "GatherEmbeddingsOp"
+  input: "GatherNeighborsOp_2"
+  attr {
+    key: "dim"
+    value {
+      i: 64
+    }
+  }
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+}
+node {
+  name: "GemvOp_2"
+  op: "GemvOp"
+  input: "user_emb"
+  input: "GatherEmbeddingsOp_2"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "IndirectSortAndTopkOp_2"
+  op: "IndirectSortAndTopkOp"
+  input: "GatherNeighborsOp_2"
+  input: "GemvOp_2"
+  attr {
+    key: "T"
+    value {
+      type: DT_UINT32
+    }
+  }
+  attr {
+    key: "U"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "topk"
+    value {
+      i: 1000
+    }
+  }
+}
+node {
+  name: "GatherEmbeddingsOp_3"
+  op: "GatherEmbeddingsOp"
+  input: "GatherNeighborsOp_2"
+  attr {
+    key: "dim"
+    value {
+      i: 64
+    }
+  }
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+}
+node {
+  name: "GemvOp_3"
+  op: "GemvOp"
+  input: "user_emb"
+  input: "GatherEmbeddingsOp_3"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+}
+node {
+  name: "IndirectSortAndTopkOp_3"
+  op: "IndirectSortAndTopkOp"
+  input: "GatherNeighborsOp_2"
+  input: "GemvOp_3"
+  attr {
+    key: "T"
+    value {
+      type: DT_UINT32
+    }
+  }
+  attr {
+    key: "U"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "topk"
+    value {
+      i: 1000
+    }
+  }
+}
+node {
+  name: "GatherNeighborsOp_3"
+  op: "GatherNeighborsOp"
+  input: "IndirectSortAndTopkOp_3"
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+  attr {
+    key: "level"
+    value {
+      i: -1
+    }
+  }
+  attr {
+    key: "nneis"
+    value {
+      i: 64
+    }
+  }
+}
+node {
+  name: "ResultConstructOp"
+  op: "ResultConstructOp"
+  input: "IndirectSortAndTopkOp_3"
+  input: "IndirectSortAndTopkOp_3:1"
+  attr {
+    key: "index_name"
+    value {
+      s: "hnsw_demo"
+    }
+  }
+}
+node {
+  name: "done"
+  op: "NoOp"
+  input: "^ResultConstructOp"
+}
+versions {
+  producer: 134
+}

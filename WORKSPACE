@@ -18,11 +18,11 @@ load("//third_party/brpc:brpc_workspace.bzl", "brpc_workspace")
 brpc_workspace();
 ############################################### apache_brpc ###############################################
 
-# http_archive(
-#     name = "gtest",
-#     urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz"],
-#     strip_prefix = "googletest-release-1.11.0",
-# )
+http_archive(
+    name = "gtest",
+    urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz"],
+    strip_prefix = "googletest-release-1.11.0",
+)
 
 ############################################### org_tensorflow ###############################################
 # new_local_repository(
