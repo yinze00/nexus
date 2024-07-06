@@ -13,7 +13,7 @@ namespace turing {
 GraphContext::GraphContext(const GraphContextArgs& argv,
                            const GraphRequest* request, GraphResponse* response)
     : req(request), rsp(response) {
-    LOG(INFO) << argv.run_options.DebugString();
+    VLOG(1) << argv.run_options.DebugString();
     run_id           = argv.run_options.run_id();
     session_resource = argv.session_resource;
     session          = argv.session;
