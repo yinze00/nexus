@@ -34,6 +34,9 @@ class ResultConstructOp : public OpKernel {
             *sf++    = std::get<1>(top);
             rslt.pop();
         }
+
+        VLOG(1) << "Labels:\t" << out_labels->DebugString(10);
+        VLOG(1) << "Scores:\t" << out_scores->DebugString(10);
     }
 
   private:

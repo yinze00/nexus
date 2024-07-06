@@ -4,14 +4,13 @@ namespace tensorflow {
 
 SessionResource::SessionResource(int max_session) : max_session_(max_session) {
     query_resource.resize(max_session_);
-    LOG(INFO) << " max_sess " << max_session_;
+    VLOG(1) << " max_sess " << max_session_;
 }
 
-void SessionResource::add_query_resource(int64_t run_id,
+void SessionResource::add_query_resource(int64_t          run_id,
                                          QueryResourcePtr query) {
     if (unlikely(run_id < 0 && run_id >= max_session_)) return;
-    // LOG(INFO) << "run_id: " << run_id << " max_sess " << max_session_
-    //           << "query_resource.size = " << query_resource.size();
+
     query_resource[run_id] = query;
 }
 

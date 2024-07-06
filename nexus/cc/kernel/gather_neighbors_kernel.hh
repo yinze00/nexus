@@ -28,8 +28,8 @@ class GatherNeighborsOp : public OpKernel {
             session_resource->indexmgr_.get_index(index_name_)->neis_.get();
 
         to_touch_neighbors_num_ = graph_->to_touch_neighbors_at_level(level_);
-        LOG(INFO) << "GatherNeighborsOp @" << level_
-                  << " to_touch_neighbors_per " << to_touch_neighbors_num_;
+        VLOG(1) << "GatherNeighborsOp @" << level_ << " to_touch_neighbors_per "
+                << to_touch_neighbors_num_;
     }
 
     void Compute(OpKernelContext* ctx);

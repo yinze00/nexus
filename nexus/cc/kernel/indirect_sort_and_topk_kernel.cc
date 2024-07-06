@@ -5,7 +5,6 @@
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/core/status.h"
-// #include "third_party/tensorflow/core/platform/types.h"
 
 using namespace tensorflow;
 
@@ -21,8 +20,8 @@ class IndirectSortAndTopkOp : public OpKernel {
         const Tensor& k = context->input(0);
         const Tensor& v = context->input(1);
 
-        LOG(INFO) << "k: " << k.DebugString();
-        LOG(INFO) << "v: " << v.DebugString();
+        VLOG(1) << "k: " << k.DebugString();
+        VLOG(1) << "v: " << v.DebugString();
 
         OP_REQUIRES(
             context, k.shape().IsSameSize(v.shape()),
@@ -60,6 +59,9 @@ class IndirectSortAndTopkOp : public OpKernel {
             sorted_k_flat(i) = kv_pairs[i].first;
             sorted_v_flat(i) = kv_pairs[i].second;
         }
+
+        VLOG(1) << "Sorted Labels\t" << sorted_k->DebugString(10);
+        VLOG(1) << "Sorted Scores\t" << sorted_v->DebugString(10);
     }
 
   private:

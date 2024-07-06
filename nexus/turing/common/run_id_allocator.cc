@@ -9,12 +9,12 @@ namespace nexus {
 namespace common {
 void RunIDAllocator::init(size_t d) {
     max_session_ = d;
-    bitmap_.resize(max_session_, false);
+    bitmap_.resize(max_session_ + 1, false);
 }
 
 int64_t RunIDAllocator::get() {
     std::lock_guard<std::mutex> lock(mtx_);
-    for (int64_t i = 0; i < max_session_; ++i) {
+    for (int64_t i = 1; i <= max_session_; ++i) {
         if (!bitmap_[i]) {
             bitmap_[i] = true;
             LOG(INFO) << "get " << i;

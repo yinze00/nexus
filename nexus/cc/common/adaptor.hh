@@ -66,11 +66,11 @@ class FaissHNSWAdaptor : public Adaptor {
         LOG(INFO) << "ones_neis_at_level.size = "
                   << hgraph->ones_neis_at_level_.size();
 
-        int i = 0;
-        for (auto val : hgraph->ones_neis_at_level_) {
-            LOG(INFO) << "i " << i << " " << val;
-            i++;
-        }
+        // int i = 0;
+        // for (auto val : hgraph->ones_neis_at_level_) {
+        //     LOG(INFO) << "i " << i << " " << val;
+        //     i++;
+        // }
 
         auto dst = hgraph->h_linklist_->base<uint32_t>();
         std::memcpy(dst, hnsw->hnsw.neighbors.data(),
@@ -92,8 +92,8 @@ class FaissHNSWAdaptor : public Adaptor {
 
                 auto nb_neighbors = hnsw->hnsw.nb_neighbors(level);
 
-                LOG(INFO) << SSTR(level) << SSTR(cum_nb_neighbors)
-                          << SSTR(nb_neighbors);
+                VLOG(1) << SSTR(level) << SSTR(cum_nb_neighbors)
+                        << SSTR(nb_neighbors);
 
                 // auto& levels = hnsw->hnsw.levels;
 
@@ -112,8 +112,7 @@ class FaissHNSWAdaptor : public Adaptor {
                 //         }
                 //     }
                 // }
-
-                hnsw->hnsw.print_neighbor_stats(level);
+                if (VLOG_IS_ON(1)) hnsw->hnsw.print_neighbor_stats(level);
             }
         }
 

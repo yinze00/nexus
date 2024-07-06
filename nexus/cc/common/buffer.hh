@@ -4,7 +4,7 @@
  * @Date: 2024-05-13 23:19:17
  * @LastEditTime: 2024-05-13
  */
-#pragma once 
+#pragma once
 #include <memory>
 
 #include "tensorflow/core/framework/types.pb.h"
@@ -21,12 +21,8 @@ using DataType = tensorflow::DataType;
  */
 class Buffer : public tensorflow::core::RefCounted {
   public:
-    explicit Buffer(void* data_ptr) : data_(data_ptr) {
-      // LOG(INFO) << "new a Buffer " << this  << std::endl;
-    }
-    ~Buffer() override {
-      LOG(INFO) << "destroy Buffer " << this  << std::endl;
-    }
+    explicit Buffer(void* data_ptr) : data_(data_ptr) {}
+    ~Buffer() = default;
 
     void* data() const noexcept { return data_; }
 
@@ -39,7 +35,7 @@ class Buffer : public tensorflow::core::RefCounted {
 
   private:
     tensorflow::DataType dtype_{tensorflow::DataType::DT_INT8};
-    void* const data_;
+    void* const          data_;
 };
 
 using BufferPtr = std::shared_ptr<Buffer>;

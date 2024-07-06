@@ -15,12 +15,10 @@ void GatherNeighborsOp::Compute(OpKernelContext* ctx) {
     auto    n            = entry_points.shape().dim_size(0);
     Tensor* out          = nullptr;
 
-    OP_REQUIRES_OK(ctx,
-                   ctx->allocate_output(0, {n * to_touch_neighbors_num_}, &out));
+    OP_REQUIRES_OK(
+        ctx, ctx->allocate_output(0, {n * to_touch_neighbors_num_}, &out));
 
     auto inner_ids = entry_points.flat<uint32_t>();
-
-    // LOG(INFO) << "graph_ = " << graph_;
 
     auto outflat = out->flat<uint32>();
 
@@ -28,12 +26,19 @@ void GatherNeighborsOp::Compute(OpKernelContext* ctx) {
 
     for (auto i = 0, offset = 0; i < inner_ids.size(); ++i) {
         auto label = inner_ids(i);
-        // LOG(INFO) << SSTR(i) << SSTR(label);
-        auto l = graph_->gather_neighbors(label);
-        std::memcpy(outflat.data() + offset, l, neis_bytes);
+        if (label != -1) {
+            auto l = graph_->gather_neighbors(label);
+            std::memcpy(outflat.data() + offset, l, neis_bytes);
+        } else {
+            auto p    = outflat.data() + offset;
+            auto temp = to_touch_neighbors_num_;
+            while (temp-- > 0) {
+                *p++ = -1;
+            }
+        }
         offset += to_touch_neighbors_num_;
     }
-    LOG(INFO) << "output: " << out->DebugString(100);
+    VLOG(1) << "Gathered Neighbors: " << out->DebugString(100);
 }
 
 REGISTER_KERNEL_BUILDER(Name("GatherNeighborsOp").Device(DEVICE_CPU),

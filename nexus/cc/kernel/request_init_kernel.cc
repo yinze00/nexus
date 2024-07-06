@@ -10,7 +10,6 @@ namespace tensorflow {
 class RequestInitOp : public OpKernel {
   public:
     explicit RequestInitOp(OpKernelConstruction* ctx) : OpKernel(ctx) {
-      LOG(INFO) << "ssssdf";
         OP_REQUIRES_OK(ctx, ctx->GetAttr("index_name", &index_name_));
     }
 
@@ -20,14 +19,15 @@ class RequestInitOp : public OpKernel {
         auto entry_point =
             session_resource->get_index(index_name_)->neis_->entry_point;
 
-        LOG(INFO) << entry_point;
+        VLOG(1) << "entry_point is\t" << entry_point;
+
         Tensor* out = nullptr;
 
         OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {1}, &out));
 
         out->flat<uint32_t>()(0) = entry_point;
 
-        LOG(INFO) << "output: " << out->DebugString(100);
+        VLOG(1) << "output: " << out->DebugString(100);
     }
 
   private:

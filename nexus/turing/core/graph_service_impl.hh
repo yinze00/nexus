@@ -20,7 +20,7 @@ using CreateContextFunc =
 
 class GraphServiceImpl : public GraphManager {
   public:
-    GraphServiceImpl() = default;
+    GraphServiceImpl()          = default;
     virtual ~GraphServiceImpl() = default;
 
     void init();
@@ -66,15 +66,17 @@ void GraphServiceImpl::process(::google::protobuf::RpcController* controller,
     auto runid = run_id_allocator->get();
 
     GraphContextArgs             argv = biz_->getGraphContextArgs();
-    tensorflow::QueryResourcePtr qrp = biz_->prepareQueryResource();
+    tensorflow::QueryResourcePtr qrp  = biz_->prepareQueryResource();
 
     argv.run_options.set_run_id(runid);
+
+    VLOG(1) << "argv.run_id = " << argv.run_options.run_id();
+
     argv.session_resource = biz_->getSessionResource();
-    auto ctx = createContext(argv, request, response);
+    auto ctx              = createContext(argv, request, response);
 
+    VLOG(1) << "add query_resouce for run_id: " << runid;
     ctx->addQueryResource(runid, qrp);
-
-    // ctx->prepareQueryResource(biz_);
 
     ctx->run([this, response, done, runid](ErrorInfo&) -> void {
         done->Run();

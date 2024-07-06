@@ -19,10 +19,7 @@ GraphContextArgs GraphBiz::getGraphContextArgs() {
     args.session_resource = getSessionResource();
     args.session          = getSession();
 
-    // args.run_options.set_run_id(int64_t value)
-
-    LOG(INFO) << "args done!";
-
+    args.run_options.set_run_id(-1);
     return args;
 }
 
@@ -33,15 +30,10 @@ tensorflow::QueryResourcePtr GraphBiz::prepareQueryResource() {
 }
 
 Status GraphBiz::init(const std::string& name) {
-    LOG(INFO) << "111";
-
     createSessionResource(1024);
-
-    LOG(INFO) << "222";
 
     TF_CHECK_OK(loadModel());
     // TF_CHECK_OK(loadGraph());
-    LOG(INFO) << "333";
 
     auto tfss = getTFSession();
 
@@ -154,7 +146,6 @@ Status GraphBiz::loadModel() {
 
         TF_CHECK_OK(bundle->session->LocalDeviceManager(&dm));
         auto ds = dm->ListDevices();
-        LOG(INFO) << "ds.size = " << ds.size();
         if (ds.empty())
             return tensorflow::Status(tensorflow::error::UNAVAILABLE,
                                       "ListDevices Empty!");
@@ -198,9 +189,7 @@ Status GraphBiz::loadModel() {
 
 std::shared_ptr<tensorflow::Session> GraphBiz::getSession(
     const std::string& model) const {
-    LOG(INFO) << model;
     auto tfss = getTFSession(model);
-    LOG(INFO) << "After get model";
     return tfss->session;
 }
 

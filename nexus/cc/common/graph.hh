@@ -123,8 +123,6 @@ class Graph {
     // set neis
     virtual uint32_t* gather_neighbors(size_t index);
 
-    // void gather_neighbors(const std::vector<size_t>& indice);
-
     void set_labels(std::vector<uint64_t>& labels);
 
     void set_neis(LinkedListUPtrType&& ptr, int level = 0) {
@@ -161,9 +159,7 @@ class HGraph : public Graph {
         h_linklist_.reset(new HierachyLinkedList<uint32_t>(n_, nn));
     }
 
-    virtual ~HGraph() {
-      if(h_linklist_) h_linklist_->Unref();
-    }
+    ~HGraph();
 
     std::pair<size_t /*begin offset*/, size_t /*end offset*/> neighbors_range(
         uint32_t idx, int level);

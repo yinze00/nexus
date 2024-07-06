@@ -13,6 +13,7 @@ namespace turing {
 GraphContext::GraphContext(const GraphContextArgs& argv,
                            const GraphRequest* request, GraphResponse* response)
     : req(request), rsp(response) {
+    LOG(INFO) << argv.run_options.DebugString();
     run_id           = argv.run_options.run_id();
     session_resource = argv.session_resource;
     session          = argv.session;
@@ -51,7 +52,8 @@ void GraphContext::run(CallBack callback) {
 
     std::vector<std::string> targets(req->graph_info().targets().begin(),
                                      req->graph_info().targets().end());
-
+    LOG(INFO) << "+++++++++ Before Session.Run +++++++++++";
+    // LOG(INFO) << run_options.DebugString();
     auto status = session->Run(run_options, inputs, fetches, targets, &outputs,
                                &run_metas);
 
