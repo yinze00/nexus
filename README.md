@@ -1,3 +1,2 @@
 # nexus
-
-[](img/nexus_turing.png)
+![](img/nexus_turing.png)
