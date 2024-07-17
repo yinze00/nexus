@@ -18,7 +18,11 @@ class ResultConstructOp : public OpKernel {
         auto query_resource   = GET_QUERY_RESOURCE(session_resource);
 
         auto&   rslt = query_resource->results;
-        int64_t nums = rslt.size();
+
+        // rslt.heapify();
+        int64_t nums = rslt->size();
+
+        rslt->heapify();
 
         Tensor* out_labels = nullptr;
         Tensor* out_scores = nullptr;
@@ -27,13 +31,19 @@ class ResultConstructOp : public OpKernel {
 
         auto lf = out_labels->flat<uint32_t>().data();
         auto sf = out_scores->flat<float>().data();
-
-        while (!rslt.empty()) {
-            auto top = rslt.top();
-            *lf++    = std::get<0>(top);
-            *sf++    = std::get<1>(top);
-            rslt.pop();
+        for (auto i = 0; i < nums; ++i) {
+            // *lf++ = query_resource->result_labels[i];
+            // *sf++ = query_resource->result_scores[i];
+            *lf++ = rslt->ids[i];
+            *sf++ = rslt->dis[i];
         }
+
+        // while (!rslt.empty()) {
+        //     auto top = rslt.top();
+        //     *lf++    = std::get<0>(top);
+        //     *sf++    = std::get<1>(top);
+        //     rslt.pop();
+        // }
 
         VLOG(1) << "Labels:\t" << out_labels->DebugString(10);
         VLOG(1) << "Scores:\t" << out_scores->DebugString(10);

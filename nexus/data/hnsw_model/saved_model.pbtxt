@@ -41,8 +41,27 @@ meta_graphs {
       }
     }
     node {
+      name: "topk"
+      op: "Placeholder"
+      attr {
+        key: "dtype"
+        value {
+          type: DT_UINT32
+        }
+      }
+      attr {
+        key: "shape"
+        value {
+          shape {
+            unknown_rank: true
+          }
+        }
+      }
+    }
+    node {
       name: "RequestInitOp"
       op: "RequestInitOp"
+      input: "topk"
       attr {
         key: "index_name"
         value {

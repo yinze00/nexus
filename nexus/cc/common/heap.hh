@@ -1,12 +1,17 @@
+#pragma once
 
 #include <stdint.h>
 
 #include <cassert>
 #include <climits>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <iostream>
 #include <limits>
+#include <sstream>
+#include <vector>
 
 namespace annop {
 template <typename T_, typename TI_>
@@ -452,5 +457,192 @@ void merge_knn_results(size_t n, size_t k, typename C::TI nshard,
                        const typename C::T* all_distances,
                        const idx_t* all_labels, typename C::T* distances,
                        idx_t* labels);
+struct MiniMaxHeap {
+    int n;
+    int k;
+    int nvalid;
+
+    std::vector<uint32_t>         ids;
+    std::vector<float>            dis;
+    typedef CMax<float, uint32_t> HC;
+
+    explicit MiniMaxHeap(int n) : n(n), k(0), nvalid(0), ids(n), dis(n) {}
+
+    void push(uint32_t i, float v) {
+        // std::cout << "push " << v << " " << i <<  "\t dis[0] = " << dis[0] <<
+        // " ids[0] = " << ids[0] << "\n" << "\tk = " << k << std::endl;
+        if (k == n) {
+            if (v >= dis[0]) return;
+            if (ids[0] != -1) {
+                --nvalid;
+            }
+            heap_pop<HC>(k--, dis.data(), ids.data());
+        }
+        heap_push<HC>(++k, dis.data(), ids.data(), v, i);
+        ++nvalid;
+    }
+
+    void heapify() { heap_reorder<HC>(k, dis.data(), ids.data()); }
+
+    float max() const { return dis[0]; };
+
+    int size() const { return nvalid; };
+
+    void clear() { nvalid = k = 0; };
+
+    int pop_min(float* vmin_out = nullptr) {
+        assert(k > 0);
+        // returns min. This is an O(n) operation
+        int i = k - 1;
+        while (i >= 0) {
+            if (ids[i] != -1) {
+                break;
+            }
+            i--;
+        }
+        if (i == -1) {
+            return -1;
+        }
+        int   imin = i;
+        float vmin = dis[i];
+        i--;
+        while (i >= 0) {
+            if (ids[i] != -1 && dis[i] < vmin) {
+                vmin = dis[i];
+                imin = i;
+            }
+            i--;
+        }
+        if (vmin_out) {
+            *vmin_out = vmin;
+        }
+        int ret   = ids[imin];
+        ids[imin] = -1;
+        --nvalid;
+
+        return ret;
+    };
+
+    int count_below(float thresh) {
+        int n_below = 0;
+        for (int i = 0; i < k; i++) {
+            if (dis[i] < thresh) {
+                n_below++;
+            }
+        }
+
+        return n_below;
+    };
+
+    std::string print() const {
+        std::stringstream ss;
+        ss << "MinimaxHeap contents:"
+           << "\n";
+        ss << "n: " << n << ", k: " << k << ", nvalid: " << nvalid << "\n";
+        ss << "ids: ";
+        for (int i = 0; i < k; ++i) {
+            ss << ids[i] << " ";
+        }
+        ss << "\n";
+        ss << "dis: ";
+        for (int i = 0; i < k; ++i) {
+            ss << dis[i] << " ";
+        }
+        ss << "\n";
+        return ss.str();
+    }
+};
+
+struct MiniMinHeap {
+    int n;
+    int k;
+    int nvalid;
+
+    std::vector<uint32_t>         ids;
+    std::vector<float>            dis;
+    typedef CMin<float, uint32_t> HC;
+
+    explicit MiniMinHeap(int n) : n(n), k(0), nvalid(0), ids(n), dis(n) {}
+
+    void push(uint32_t i, float v) {
+        if (k == n) {
+            if (v <= dis[0]) return;
+            if (ids[0] != -1) {
+                --nvalid;
+            }
+            heap_pop<HC>(k--, dis.data(), ids.data());
+        }
+        heap_push<HC>(++k, dis.data(), ids.data(), v, i);
+        ++nvalid;
+    }
+    void  heapify() { heap_reorder<HC>(k, dis.data(), ids.data()); }
+    float min() const { return dis[0]; };
+
+    int size() const { return nvalid; };
+
+    void clear() { nvalid = k = 0; };
+
+    int pop_max(float* vmax_out = nullptr) {
+        assert(k > 0);
+        // returns min. This is an O(n) operation
+        int i = k - 1;
+        while (i >= 0) {
+            if (ids[i] != -1) {
+                break;
+            }
+            i--;
+        }
+        if (i == -1) {
+            return -1;
+        }
+        int   imax = i;
+        float vmax = dis[i];
+        i--;
+        while (i >= 0) {
+            if (ids[i] != -1 && dis[i] > vmax) {
+                vmax = dis[i];
+                imax = i;
+            }
+            i--;
+        }
+        if (vmax_out) {
+            *vmax_out = vmax;
+        }
+        int ret   = ids[imax];
+        ids[imax] = -1;
+        --nvalid;
+
+        return ret;
+    };
+
+    int count_above(float thresh) {
+        int n_below = 0;
+        for (int i = 0; i < k; i++) {
+            if (dis[i] > thresh) {
+                n_below++;
+            }
+        }
+
+        return n_below;
+    };
+
+    std::string print() const {
+        std::stringstream ss;
+        ss << "MiniMinHeap contents:"
+           << "\n";
+        ss << "n: " << n << ", k: " << k << ", nvalid: " << nvalid << "\n";
+        ss << "ids: ";
+        for (int i = 0; i < k; ++i) {
+            ss << ids[i] << " ";
+        }
+        ss << "\n";
+        ss << "dis: ";
+        for (int i = 0; i < k; ++i) {
+            ss << dis[i] << " ";
+        }
+        ss << "\n";
+        return ss.str();
+    }
+};
 
 }  // namespace annop

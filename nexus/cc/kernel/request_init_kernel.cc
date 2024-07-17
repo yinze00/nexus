@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <vector>
 
 #include "nexus/turing/common/op_util.hh"
@@ -15,6 +16,40 @@ class RequestInitOp : public OpKernel {
 
     void Compute(OpKernelContext* ctx) {
         auto session_resource = GET_SESSION_RESOURCE(ctx);
+        auto query_resouce    = GET_QUERY_RESOURCE(session_resource);
+        {
+            auto topk = ctx->input(0).scalar<uint32>()();
+            query_resouce->candidate_labels.resize(topk << 1);
+            query_resouce->candidate_scores.resize(topk << 1);
+            query_resouce->result_labels.resize(topk);
+            query_resouce->result_scores.resize(topk);
+            // query_resouce->candidates.scores =
+            //     query_resouce->candidate_scores.data();
+            // query_resouce->candidates.labels =
+            //     query_resouce->candidate_labels.data();
+            // query_resouce->candidates.topk = topk << 1;
+
+            query_resouce->candidates =
+                std::make_unique<annop::MiniMaxHeap>(topk << 1);
+
+            query_resouce->results = std::make_unique<annop::MiniMinHeap>(topk);
+
+            // query_resouce->results.scores =
+            // query_resouce->result_scores.data();
+
+            // query_resouce->results.labels =
+            // query_resouce->result_labels.data();
+
+            // query_resouce->results.topk = topk;
+            // query_resouce->results.heapify();
+        }
+
+        query_resouce->visited_table_ =
+            std::make_shared<QueryResource::VisitedTable>(
+                session_resource->get_index(index_name_)->neis_->n_);
+
+        query_resouce->visited.resize(
+            session_resource->get_index(index_name_)->neis_->n_, false);
 
         auto entry_point =
             session_resource->get_index(index_name_)->neis_->entry_point;

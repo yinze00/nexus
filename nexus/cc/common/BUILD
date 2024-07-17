@@ -44,3 +44,15 @@ cc_test(
         "@gtest//:gtest_main"
     ]
 )
+
+cc_test(
+    name = "heap_test",
+    srcs = [
+        "heap_test.cc",
+    ],
+    deps = [
+        ":common",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main"
+    ]
+)

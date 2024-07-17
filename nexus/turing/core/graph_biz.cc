@@ -25,6 +25,7 @@ GraphContextArgs GraphBiz::getGraphContextArgs() {
 
 tensorflow::QueryResourcePtr GraphBiz::prepareQueryResource() {
     auto qry = std::make_shared<tensorflow::QueryResource>();
+    // qry->
     // TODO: prepare ab_params.json
     return qry;
 }
