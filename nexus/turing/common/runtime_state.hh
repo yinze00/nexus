@@ -4,8 +4,10 @@
 #include <vector>
 
 #include "nexus/cc/common/heap.hh"
+#include "nexus/cc/common/result_handler.hh"
 #include "nexus/turing/proto/run_graph.pb.h"
 #include "tensorflow/core/framework/tensor.h"
+#include "tensorflow/core/platform/types.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
 namespace tensorflow {
@@ -16,10 +18,13 @@ class RuntimeState {
     ~RuntimeState() = default;
 
     // disable assignment
-    RuntimeState(const RuntimeState&)            = delete;
-    RuntimeState& operator=(const RuntimeState&) = delete;
+    // RuntimeState(const RuntimeState&)            = delete;
+    // RuntimeState& operator=(const RuntimeState&) = delete;
 
   public:
+    using CMaxHandler = annop::HeapResultHandler<annop::CMax<float, uint32_t>>;
+    using CMinHandler = annop::HeapResultHandler<annop::CMin<float, uint32_t>>;
+
     struct AscentCompare {
         bool operator()(const std::pair<uint32_t, float>& a,
                         const std::pair<uint32_t, float>& b) {
@@ -34,36 +39,11 @@ class RuntimeState {
         }
     };
 
-    // struct MinHeap {
-    //     using HC = annop::CMax<float, uint32_t>;
-    //     explicit MinHeap(int n) : n(n), k(0), nvalid(0), labels(n), scores(n)
-    //     {}
-
-    //     int n;
-    //     int k;
-    //     int nvalid;
-
-    //     std::vector<uint32_t> labels;
-    //     std::vector<float>    scores;
-
-    //     void push(uint32_t i, float v) {
-    //         if (k == n) {
-    //             if (v >= scores[0]) return;
-    //             if (labels[0] != -1) {
-    //                 --nvalid;
-    //             }
-    //             annop::heap_pop<HC>(k--, scores.data(), labels.data());
-    //         }
-    //         annop::heap_push<HC>(++k, scores.data(), labels.data(), v, i);
-    //         ++nvalid;
-    //     }
-    // };
-
     struct VisitedTable {
         std::vector<uint8_t> visited;
         uint8_t              visno;
 
-        explicit VisitedTable(int size) : visited(size), visno(1) {}
+        explicit VisitedTable(int size) : visited(size, 0), visno(1) {}
 
         void set(int no) { visited[no] = visno; }
 
@@ -80,15 +60,21 @@ class RuntimeState {
         }
     };
 
+    std::vector<bool> visited;
+
     // maxheap
-    std::priority_queue<std::pair<uint32_t, float>,
-                        std::vector<std::pair<uint32_t, float>>, DescentCompare>
-        candidates;
+    // std::priority_queue<std::pair<uint32_t, float>,
+    //                     std::vector<std::pair<uint32_t, float>>,
+    //                     DescentCompare>
+    std::unique_ptr<annop::MiniMaxHeap> candidates{
+        nullptr};  // update after gather_neis_op
 
     // results
-    std::priority_queue<std::pair<uint32_t, float>,
-                        std::vector<std::pair<uint32_t, float>>, AscentCompare>
-        results;
+    // std::priority_queue<std::pair<uint32_t, float>,
+    //                     std::vector<std::pair<uint32_t, float>>,
+    //                     AscentCompare>
+    std::unique_ptr<annop::MiniMinHeap> results{nullptr};
+    // CMinHandler results;  // update after indirect_sort_and_topk_op
 
   public:
     //@getter
@@ -116,6 +102,16 @@ class RuntimeState {
     }
 
     tensorflow::Tensor user_emb;
+
+    std::vector<uint32_t> candidate_labels;
+    std::vector<float>    candidate_scores;
+
+    std::vector<uint32_t> result_labels;
+    std::vector<float>    result_scores;
+
+    int res{0};
+
+    std::shared_ptr<VisitedTable> visited_table_{nullptr};
 
   private:
     std::vector<std::shared_ptr<nexus::turing::NamedRunMetadata>> run_metas_;

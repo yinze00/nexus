@@ -42,14 +42,15 @@ class HNSWGraphGenerator(object):
         
         g = tf.Graph()
         with g.as_default():
-            hnsw_module = tf.load_op_library('/home/yinze/dev/zenith/nexus/nexus/cc/nexus_ops_defs.so')
+            hnsw_module = tf.load_op_library('/home/yinze/dev/zenith/nexus/nexus/cc/new_nexus_ops_defs.so')
 
             # graph feeds 
             user_emb    = tf.compat.v1.placeholder(tf.float32, name='user_emb')
             hints       = tf.compat.v1.placeholder(tf.uint32, name='hints')
+            topk        = tf.compat.v1.placeholder(tf.uint32, name='topk')
             
             # entry_point at top level
-            entry_point = hnsw_module.request_init_op(index_name="hnsw_demo")
+            entry_point = hnsw_module.request_init_op(topk, index_name="hnsw_demo")
             
             nneis_of_layer = 128
                         
@@ -85,5 +86,5 @@ if __name__ == '__main__':
     g =     gen.generate()
     g_def = g.as_graph_def()
 
-    with open(gen.output_path + "/hnsw_graph.pbtxt", 'w') as f:
+    with open(gen.output_path + "/faiss_hnsw_graph.pbtxt", 'w') as f:
         f.write(str(g_def))

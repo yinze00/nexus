@@ -4,6 +4,7 @@
 using namespace tensorflow;
 
 REGISTER_OP("RequestInitOp")
+    .Input("topk: uint32")
     .Output("entry_point: uint32")
     .Attr("index_name: string")
     .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {

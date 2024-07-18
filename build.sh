@@ -17,4 +17,5 @@
 
 # bazelisk build //nexus  --verbose_failures --config=use-lld
 
-bazelisk build //nexus/test/...  --strip=never  -c dbg  --verbose_failures --config=use-lld
+# bazelisk build //nexus/test/...  --strip=never  -c dbg  --verbose_failures --config=use-lld
+bazelisk build //nexus/cc/common:heap_test  --strip=never  -c dbg  --verbose_failures --config=use-lld
